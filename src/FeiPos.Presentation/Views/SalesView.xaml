@@ -1,0 +1,332 @@
+<UserControl x:Class="FeiPos.Presentation.Views.SalesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:vm="clr-namespace:FeiPos.Presentation.ViewModels"
+             Background="#252525">
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="PosSurfaceBrush" Color="#252525"/>
+        <SolidColorBrush x:Key="PosPanelBrush" Color="#303030"/>
+        <SolidColorBrush x:Key="PosButtonBrush" Color="#242424"/>
+        <SolidColorBrush x:Key="PosButtonHoverBrush" Color="#313131"/>
+        <SolidColorBrush x:Key="PosBorderBrush" Color="#4A4A4A"/>
+        <SolidColorBrush x:Key="PosBlueBrush" Color="#16A4D8"/>
+        <SolidColorBrush x:Key="PosGreenBrush" Color="#3F9348"/>
+        <SolidColorBrush x:Key="PosRedBrush" Color="#C82D2D"/>
+
+        <Style x:Key="ModeButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#2E2E2E"/>
+            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+        </Style>
+
+        <Style x:Key="PosButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="{StaticResource PosButtonBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PosBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="PayMethodButtonStyle" TargetType="Button" BasedOn="{StaticResource PosButtonStyle}">
+            <Setter Property="MinHeight" Value="58"/>
+            <Setter Property="BorderThickness" Value="1,1,1,3"/>
+        </Style>
+
+        <Style x:Key="ActionIconTextStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#1F1F1F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PosBlueBrush}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="{StaticResource PosSurfaceBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="BorderBrush" Value="#333333"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="8,0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <UserControl.InputBindings>
+        <KeyBinding Key="F2" Command="{Binding ApplyDiscountCommand}" />
+        <KeyBinding Key="F3" Command="{Binding SearchCommand}" />
+        <KeyBinding Key="F4" Command="{Binding QtyCommand}" />
+        <KeyBinding Key="F8" Command="{Binding NewSaleCommand}" />
+        <KeyBinding Key="F9" Command="{Binding SaveOrderCommand}" />
+        <KeyBinding Key="F10" Command="{Binding CheckoutCommand}" CommandParameter="Pago avanzado" />
+        <KeyBinding Key="F12" Command="{Binding CheckoutCommand}" CommandParameter="Cash" />
+        <KeyBinding Key="Delete" Command="{Binding RemoveSelectedItemCommand}" />
+    </UserControl.InputBindings>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*" MinWidth="640"/>
+            <ColumnDefinition Width="3*" MinWidth="360"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Background="{StaticResource PosSurfaceBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="52"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="116"/>
+            </Grid.RowDefinitions>
+
+            <Border Background="#2E2E2E" BorderBrush="{StaticResource PosBlueBrush}" BorderThickness="0,0,0,1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="48"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="*" Command="{Binding SetSearchModeCommand}" CommandParameter="{x:Static vm:ProductSearchMode.AllFields}" Style="{StaticResource ModeButtonStyle}"/>
+                    <Button Grid.Column="1" Content="|||"
+                            Command="{Binding SetSearchModeCommand}"
+                            CommandParameter="{x:Static vm:ProductSearchMode.Barcode}"
+                            Style="{StaticResource ModeButtonStyle}"/>
+                    <Button Grid.Column="2" Content="#"
+                            Command="{Binding SetSearchModeCommand}"
+                            CommandParameter="{x:Static vm:ProductSearchMode.Sku}"
+                            Style="{StaticResource ModeButtonStyle}"/>
+                    <Button Grid.Column="3" Content="Tag"
+                            Command="{Binding SetSearchModeCommand}"
+                            CommandParameter="{x:Static vm:ProductSearchMode.Name}"
+                            Foreground="{StaticResource PosBlueBrush}"
+                            FontSize="13"
+                            Style="{StaticResource ModeButtonStyle}"/>
+
+                    <ui:AutoSuggestBox Grid.Column="4"
+                                       x:Name="SearchBox"
+                                       QueryIcon="Find"
+                                       FontSize="14"
+                                       PlaceholderText="Buscar producto por nombre"
+                                       Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                       QuerySubmitted="SearchBox_QuerySubmitted"
+                                       VerticalAlignment="Center"
+                                       Margin="6,0,12,0"/>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1">
+                <DataGrid x:Name="CartGrid"
+                          ItemsSource="{Binding Cart}"
+                          SelectedItem="{Binding SelectedCartItem}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Background="{StaticResource PosSurfaceBrush}"
+                          Foreground="White"
+                          BorderBrush="{StaticResource PosBorderBrush}"
+                          BorderThickness="1,0,0,0"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          FontSize="15">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nombre del producto" Binding="{Binding ProductName}" Width="*" />
+                        <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantity}" Width="120" />
+                        <DataGridTextColumn Header="Precio" Binding="{Binding UnitPrice, StringFormat=N2}" Width="120" />
+                        <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=N2}" Width="120" />
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=CartGrid, Path=HasItems}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <TextBlock Text="No hay artículos"
+                               Foreground="#AFAFAF"
+                               FontWeight="Bold"
+                               FontSize="24"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Agregue productos usando código de barras, código o búsqueda con F3"
+                               Foreground="#B0B0B0"
+                               FontSize="16"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="2" Background="{StaticResource PosPanelBrush}" BorderBrush="{StaticResource PosBorderBrush}" BorderThickness="1,1,0,0">
+                <Grid Margin="12,10,12,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="300"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding StatusMessage}" Foreground="#B0B0B0" VerticalAlignment="Bottom"/>
+                    <StackPanel Grid.Column="1">
+                        <Grid Height="28">
+                            <TextBlock Text="Subtotal" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Subtotal, StringFormat=N2}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
+                        </Grid>
+                        <Grid Height="28">
+                            <TextBlock Text="Impuestos" Foreground="White" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Tax, StringFormat=N2}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
+                        </Grid>
+                        <Border BorderBrush="#666666" BorderThickness="0,1,0,0" Margin="0,6,0,0"/>
+                        <Grid Height="38" Margin="0,4,0,0">
+                            <TextBlock Text="TOTAL" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding Total, StringFormat=N2}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="28" FontWeight="Bold"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Column="1" Background="{StaticResource PosPanelBrush}" Margin="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="104"/>
+                <RowDefinition Height="64"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="84"/>
+                <RowDefinition Height="84"/>
+                <RowDefinition Height="92"/>
+                <RowDefinition Height="92"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Row="0" Grid.Column="0" Command="{Binding SearchCommand}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="F3" FontWeight="Bold"/>
+                    <TextBlock Text="Search" FontSize="24" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Buscar" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Command="{Binding QtyCommand}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="F4" FontWeight="Bold"/>
+                    <TextBlock Text="Qty +" FontSize="24" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Cantidad" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="2" Command="{Binding NewSaleCommand}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="F8" FontWeight="Bold"/>
+                    <TextBlock Text="+" FontSize="38" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Nueva venta" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Row="1" Grid.Column="0" Command="{Binding CheckoutCommand}" CommandParameter="Cash" BorderBrush="#438A4E" Style="{StaticResource PayMethodButtonStyle}" Content="F12  Cash"/>
+            <Button Grid.Row="1" Grid.Column="1" Command="{Binding CheckoutCommand}" CommandParameter="Card" BorderBrush="{StaticResource PosBlueBrush}" Style="{StaticResource PayMethodButtonStyle}" Content="Card"/>
+            <Button Grid.Row="1" Grid.Column="2" Command="{Binding CheckoutCommand}" CommandParameter="Check" BorderBrush="{StaticResource PosBlueBrush}" Style="{StaticResource PayMethodButtonStyle}" Content="Check"/>
+
+            <Border Grid.Row="2" Grid.ColumnSpan="3" Margin="4" BorderBrush="#3B3B3B" BorderThickness="0,1,0,1">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Fei POS" Foreground="#454545" FontSize="38" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{Binding SelectedCustomer.FullName, TargetNullValue=Cliente de Contado}" Foreground="#8D8D8D" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Button Grid.Row="3" Grid.Column="0" Command="{Binding RemoveSelectedItemCommand}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="X" FontSize="28" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Eliminar" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="3" Grid.Column="1" Click="OperationalMenuButton_Click" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="?" FontSize="28" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Service type" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="3" Grid.Column="2" Click="OpenOrdersButton_Click" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Open" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Abiertas" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Row="4" Grid.Column="0" Click="DiscountButton_Click" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="F2" FontWeight="Bold"/>
+                    <TextBlock Text="%" FontSize="32" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Descuento" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="4" Grid.Column="1" Click="CommentButton_Click" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Msg" FontSize="22" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Comentario" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="4" Grid.Column="2" Click="CustomerButton_Click" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="User" FontSize="22" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Cliente" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Row="5" Grid.Column="0" Command="{Binding SaveOrderCommand}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="F9" FontSize="28" FontWeight="Bold" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Guardar venta" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="5" Grid.Column="1" Click="OperationalMenuButton_Click" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Return" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Reembolso" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="5" Grid.RowSpan="2" Grid.Column="2" Click="PaymentButton_Click" Background="{StaticResource PosGreenBrush}" BorderBrush="{StaticResource PosGreenBrush}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="F10" FontSize="32" FontWeight="Bold" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Pago" FontSize="18" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Row="6" Grid.Column="0" Command="{Binding VoidOrderCommand}" Background="{StaticResource PosRedBrush}" BorderBrush="{StaticResource PosRedBrush}" Style="{StaticResource PosButtonStyle}">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Delete" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Anular orden" Style="{StaticResource ActionIconTextStyle}"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Row="6" Grid.Column="1" Click="ShellMenuButton_Click" Style="{StaticResource PosButtonStyle}">
+                <TextBlock Text="..." FontSize="32" Style="{StaticResource ActionIconTextStyle}"/>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

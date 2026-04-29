@@ -1,0 +1,86 @@
+using System;
+using System.Windows;
+using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using FeiPos.Infrastructure.Persistence;
+using FeiPos.Presentation.ViewModels;
+using FeiPos.Application.Interfaces;
+using FeiPos.Infrastructure.Services;
+
+namespace FeiPos.Presentation
+{
+    public partial class App : System.Windows.Application
+    {
+        private IServiceProvider _serviceProvider = null!;
+
+        public App()
+        {
+            // Captura de excepciones globales
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+            
+            try
+            {
+                ServiceCollection services = new ServiceCollection();
+                ConfigureServices(services);
+                _serviceProvider = services.BuildServiceProvider();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("critical_error.txt", ex.ToString());
+                MessageBox.Show($"Error crítico en DI: {ex.Message}");
+            }
+        }
+
+        private void ConfigureServices(ServiceCollection services)
+        {
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlite("Data Source=feipos.db"));
+
+            services.AddSingleton<ConfigurationService>();
+            services.AddHttpClient<IHaciendaService, HaciendaService>();
+            services.AddHttpClient<HaciendaIdentityService>();
+            services.AddSingleton<EscPosPrinterService>();
+            services.AddTransient<SalesViewModel>();
+            services.AddTransient<SettingsViewModel>();
+            services.AddTransient<QueueViewModel>();
+            services.AddTransient<InventoryViewModel>();
+            services.AddTransient<CustomerViewModel>();
+            services.AddTransient<DashboardViewModel>();
+            services.AddTransient<MainWindow>();
+            
+            // Importante: Registrar el propio IServiceProvider para la navegación
+            services.AddSingleton<IServiceProvider>(sp => sp);
+        }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            try
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    DbInitializer.Initialize(dbContext);
+                }
+
+                var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+                mainWindow.Show();
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("startup_error.txt", ex.ToString());
+                MessageBox.Show($"Error al iniciar la aplicación: {ex.Message}\n\nRevisa startup_error.txt para más detalles.");
+                Shutdown();
+            }
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            File.AppendAllText("runtime_error.txt", e.Exception.ToString());
+            MessageBox.Show($"Ocurrió un error inesperado: {e.Exception.Message}");
+            e.Handled = true;
+        }
+    }
+}
