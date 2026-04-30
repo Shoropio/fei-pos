@@ -11,16 +11,37 @@
                          IsPaneOpen="False"
                          CompactPaneLength="0"
                          OpenPaneLength="260"
-                         IsSettingsVisible="True"
+                         IsSettingsVisible="False"
                          Header="Fei POS"
                          SelectionChanged="NavView_SelectionChanged">
+            <ui:NavigationView.Resources>
+                <Style TargetType="{x:Type ui:NavigationViewItem}">
+                    <Setter Property="MinHeight" Value="40"/>
+                </Style>
+            </ui:NavigationView.Resources>
+
             <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem Content="Dashboard" Icon="Home" Tag="Dashboard" />
-                <ui:NavigationViewItem Content="Punto de Venta" Icon="Shop" Tag="Sales" />
-                <ui:NavigationViewItem Content="Inventario" Icon="AllApps" Tag="Inventory" />
-                <ui:NavigationViewItem Content="Clientes" Icon="People" Tag="Customers" />
-                <ui:NavigationViewItem Content="Monitor Fiscal" Icon="FourBars" Tag="Reports" />
+                <ui:NavigationViewItem Icon="Home" Tag="Dashboard">
+                    <TextBlock Text="Dashboard" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="Shop" Tag="Sales">
+                    <TextBlock Text="Punto de Venta" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="AllApps" Tag="Inventory">
+                    <TextBlock Text="Inventario" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="People" Tag="Customers">
+                    <TextBlock Text="Clientes" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="FourBars" Tag="Reports">
+                    <TextBlock Text="Monitor Fiscal" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Icon="Setting" Tag="Settings">
+                    <TextBlock Text="Configuración" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.FooterMenuItems>
 
             <ContentControl x:Name="ContentFrame" Margin="12">
                 <Grid>
