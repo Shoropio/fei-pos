@@ -1,0 +1,25 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results and coverage
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Logs and local runtime files
+*.log
+startup_error.txt
+
+# Local SQLite runtime sidecars
+*.db-shm
+*.db-wal
