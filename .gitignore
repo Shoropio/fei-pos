@@ -19,7 +19,13 @@ coverage/
 # Logs and local runtime files
 *.log
 startup_error.txt
+runtime_error.txt
 
-# Local SQLite runtime sidecars
+# Local SQLite databases and runtime sidecars
+*.db
+*.db.bak.*
 *.db-shm
 *.db-wal
+
+# Accidental nested repository/workspace
+FeiPOS/
