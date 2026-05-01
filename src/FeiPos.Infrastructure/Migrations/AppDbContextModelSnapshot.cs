@@ -53,6 +53,165 @@ namespace FeiPos.Infrastructure.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("FeiPos.Domain.Entities.AppUser", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppUsers");
+                });
+
+            modelBuilder.Entity("FeiPos.Domain.Entities.CashDrawerEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashDrawerEntries");
+                });
+
+            modelBuilder.Entity("FeiPos.Domain.Entities.CustomerCreditPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("CustomerCreditPayments");
+                });
+
+            modelBuilder.Entity("FeiPos.Domain.Entities.DayClosure", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("BusinessDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("CardTotal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("CashTotal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("CheckTotal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ClosedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ClosedBy")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("CountedCash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("CreditTotal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("DepositsTotal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Difference")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ExpectedCash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("SalesTotal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("WithdrawalsTotal")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DayClosures");
+                });
+
             modelBuilder.Entity("FeiPos.Domain.Entities.HaciendaResponse", b =>
                 {
                     b.Property<Guid>("Id")
@@ -73,7 +232,15 @@ namespace FeiPos.Infrastructure.Migrations
                     b.Property<Guid>("SaleId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SignedXml")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("XmlRequest")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -186,6 +353,10 @@ namespace FeiPos.Infrastructure.Migrations
                     b.Property<int>("InvoiceStatus")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
@@ -242,6 +413,17 @@ namespace FeiPos.Infrastructure.Migrations
                     b.HasOne("FeiPos.Domain.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId");
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("FeiPos.Domain.Entities.CustomerCreditPayment", b =>
+                {
+                    b.HasOne("FeiPos.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
                 });

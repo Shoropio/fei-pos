@@ -5,12 +5,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeiPos.Domain.Entities;
 using FeiPos.Infrastructure.Persistence;
+using FeiPos.Infrastructure.Services;
 
 namespace FeiPos.Presentation.ViewModels
 {
     public partial class DayCloseViewModel : ObservableObject
     {
         private readonly AppDbContext _context;
+        private readonly AuthService _authService;
+        private readonly EscPosPrinterService _printerService;
 
         [ObservableProperty] private DateTime _businessDate = DateTime.Today;
         [ObservableProperty] private decimal _salesTotal;
@@ -27,9 +30,11 @@ namespace FeiPos.Presentation.ViewModels
         [ObservableProperty] private string _statusMessage = string.Empty;
         [ObservableProperty] private ObservableCollection<DayClosure> _closures = new();
 
-        public DayCloseViewModel(AppDbContext context)
+        public DayCloseViewModel(AppDbContext context, AuthService authService, EscPosPrinterService printerService)
         {
             _context = context;
+            _authService = authService;
+            _printerService = printerService;
             Refresh();
         }
 
@@ -80,14 +85,18 @@ namespace FeiPos.Presentation.ViewModels
                 ExpectedCash = ExpectedCash,
                 CountedCash = CountedCash,
                 Difference = Difference,
+                ClosedBy = _authService.CurrentUserName,
                 Notes = Notes
             };
 
             _context.DayClosures.Add(closure);
             _context.SaveChanges();
+            
+            _printerService.PrintDayClosure(closure);
+            
             Notes = string.Empty;
             Refresh();
-            StatusMessage = "Día finalizado";
+            StatusMessage = "Día finalizado y reporte impreso";
         }
     }
 }

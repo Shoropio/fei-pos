@@ -43,9 +43,13 @@ namespace FeiPos.Domain.Entities
         public string UserName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string Role { get; set; } = "Cashier";
+        public string PasswordHash { get; set; } = string.Empty;
+        public string PasswordSalt { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public bool IsCurrent { get; set; }
+        public bool MustChangePassword { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? LastLoginAt { get; set; }
     }
 
     public class CustomerCreditPayment

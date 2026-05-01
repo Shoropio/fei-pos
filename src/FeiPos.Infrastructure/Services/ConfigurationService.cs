@@ -45,5 +45,15 @@ namespace FeiPos.Infrastructure.Services
         public string CertificatePin { get; set; } = "1234";
         public string TerminalId { get; set; } = "00001";
         public string OfficeId { get; set; } = "001";
+        public string PrinterName { get; set; } = "POS-80";
+        public bool AutoPrintReceipt { get; set; } = true;
+        public string EconomicActivity { get; set; } = "000000";
+        public string Province { get; set; } = "1";
+        public string Canton { get; set; } = "01";
+        public string District { get; set; } = "01";
+        public string Neighborhood { get; set; } = "01";
+        public string Address { get; set; } = "Otras señas";
+        public string Phone { get; set; } = "2222-3333";
+        public string Email { get; set; } = "ventas@comercio.com";
     }
 }

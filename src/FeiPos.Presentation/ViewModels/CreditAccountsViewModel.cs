@@ -5,12 +5,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeiPos.Domain.Entities;
 using FeiPos.Infrastructure.Persistence;
+using FeiPos.Infrastructure.Services;
 
 namespace FeiPos.Presentation.ViewModels
 {
     public partial class CreditAccountsViewModel : ObservableObject
     {
         private readonly AppDbContext _context;
+        private readonly AuthService _authService;
 
         [ObservableProperty] private ObservableCollection<CreditAccountRow> _accounts = new();
         [ObservableProperty] private ObservableCollection<CustomerCreditPayment> _payments = new();
@@ -19,9 +21,10 @@ namespace FeiPos.Presentation.ViewModels
         [ObservableProperty] private string _paymentReference = string.Empty;
         [ObservableProperty] private string _statusMessage = string.Empty;
 
-        public CreditAccountsViewModel(AppDbContext context)
+        public CreditAccountsViewModel(AppDbContext context, AuthService authService)
         {
             _context = context;
+            _authService = authService;
             LoadAccounts();
         }
 
@@ -94,7 +97,8 @@ namespace FeiPos.Presentation.ViewModels
             {
                 CustomerId = SelectedAccount.CustomerId,
                 Amount = PaymentAmount,
-                Reference = string.IsNullOrWhiteSpace(PaymentReference) ? "Abono" : PaymentReference.Trim()
+                Reference = string.IsNullOrWhiteSpace(PaymentReference) ? "Abono" : PaymentReference.Trim(),
+                UserName = _authService.CurrentUserName
             });
             _context.SaveChanges();
             PaymentAmount = 0;

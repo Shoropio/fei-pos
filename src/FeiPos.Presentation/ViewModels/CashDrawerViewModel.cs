@@ -5,12 +5,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FeiPos.Domain.Entities;
 using FeiPos.Infrastructure.Persistence;
+using FeiPos.Infrastructure.Services;
 
 namespace FeiPos.Presentation.ViewModels
 {
     public partial class CashDrawerViewModel : ObservableObject
     {
         private readonly AppDbContext _context;
+        private readonly AuthService _authService;
+        private readonly EscPosPrinterService _printerService;
 
         [ObservableProperty] private ObservableCollection<CashDrawerEntry> _entries = new();
         [ObservableProperty] private CashDrawerEntryType _selectedType = CashDrawerEntryType.Deposit;
@@ -22,9 +25,11 @@ namespace FeiPos.Presentation.ViewModels
 
         public Array EntryTypes => Enum.GetValues(typeof(CashDrawerEntryType));
 
-        public CashDrawerViewModel(AppDbContext context)
+        public CashDrawerViewModel(AppDbContext context, AuthService authService, EscPosPrinterService printerService)
         {
             _context = context;
+            _authService = authService;
+            _printerService = printerService;
             LoadEntries();
         }
 
@@ -48,13 +53,23 @@ namespace FeiPos.Presentation.ViewModels
         {
             if (Amount <= 0) return;
 
-            _context.CashDrawerEntries.Add(new CashDrawerEntry
+            var entry = new CashDrawerEntry
             {
                 Type = SelectedType,
                 Amount = Amount,
-                Reason = string.IsNullOrWhiteSpace(Reason) ? "Movimiento de caja" : Reason.Trim()
-            });
+                Reason = string.IsNullOrWhiteSpace(Reason) ? "Movimiento de caja" : Reason.Trim(),
+                UserName = _authService.CurrentUserName
+            };
+
+            _context.CashDrawerEntries.Add(entry);
             _context.SaveChanges();
+
+            _printerService.PrintCashEntry(entry);
+            if (entry.Type == CashDrawerEntryType.Withdrawal)
+            {
+                _printerService.OpenDrawer();
+            }
+
             Amount = 0;
             Reason = string.Empty;
             LoadEntries();
