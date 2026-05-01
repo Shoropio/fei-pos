@@ -12,6 +12,10 @@ namespace FeiPos.Infrastructure.Persistence
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }
         public DbSet<HaciendaResponse> HaciendaResponses { get; set; }
+        public DbSet<CashDrawerEntry> CashDrawerEntries { get; set; }
+        public DbSet<DayClosure> DayClosures { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<CustomerCreditPayment> CustomerCreditPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +30,11 @@ namespace FeiPos.Infrastructure.Persistence
             modelBuilder.Entity<Product>()
                 .HasIndex(p => p.Sku)
                 .IsUnique();
+
+            modelBuilder.Entity<CustomerCreditPayment>()
+                .HasOne(p => p.Customer)
+                .WithMany()
+                .HasForeignKey(p => p.CustomerId);
         }
     }
 }

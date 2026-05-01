@@ -1,6 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -69,6 +72,9 @@ namespace FeiPos.Presentation.ViewModels
         public ObservableCollection<ProductSearchMode> SearchModes { get; } = new(
             Enum.GetValues<ProductSearchMode>());
 
+        public event Action<string>? SaleCompleted;
+        public event Action<string>? CheckoutBlocked;
+
         public SalesViewModel(
             AppDbContext context,
             IHaciendaService haciendaService,
@@ -83,6 +89,14 @@ namespace FeiPos.Presentation.ViewModels
             LoadProducts();
             LoadCustomers();
             LoadOpenOrders();
+        }
+
+        partial void OnStatusMessageChanged(string value)
+        {
+            if (value.StartsWith("Pago ", StringComparison.OrdinalIgnoreCase))
+            {
+                SaleCompleted?.Invoke("Venta procesada correctamente");
+            }
         }
 
         private void LoadProducts()
@@ -211,7 +225,7 @@ namespace FeiPos.Presentation.ViewModels
         private void SetSearchMode(ProductSearchMode mode)
         {
             SelectedSearchMode = mode;
-            StatusMessage = $"Modo de búsqueda: {mode}";
+            StatusMessage = $"Modo de busqueda: {GetSearchModeLabel(mode)}";
         }
 
         [RelayCommand]
@@ -227,9 +241,31 @@ namespace FeiPos.Presentation.ViewModels
         [RelayCommand]
         private void RemoveSelectedItem()
         {
-            if (SelectedCartItem == null) return;
+            if (SelectedCartItem == null)
+            {
+                if (Cart.Count == 1)
+                {
+                    SelectedCartItem = Cart.First();
+                }
+                else
+                {
+                    StatusMessage = "Seleccione una linea para eliminar";
+                    CheckoutBlocked?.Invoke(StatusMessage);
+                    return;
+                }
+            }
 
-            Cart.Remove(SelectedCartItem);
+            var itemToRemove = Cart.FirstOrDefault(i => i.Id == SelectedCartItem.Id)
+                ?? Cart.FirstOrDefault(i => i.ProductId == SelectedCartItem.ProductId);
+
+            if (itemToRemove == null)
+            {
+                StatusMessage = "La linea seleccionada ya no esta en el carrito";
+                CheckoutBlocked?.Invoke(StatusMessage);
+                return;
+            }
+
+            Cart.Remove(itemToRemove);
             SelectedCartItem = null;
             CalculateTotals();
             StatusMessage = "Línea anulada";
@@ -266,7 +302,7 @@ namespace FeiPos.Presentation.ViewModels
                 ? Math.Min(amount.Value, Subtotal + Tax)
                 : Math.Round(Subtotal * 0.05m, 2);
             CalculateTotals();
-            StatusMessage = $"Descuento {Discount:N2} aplicado";
+            StatusMessage = $"Descuento ₡{Discount:N2} aplicado";
         }
 
         [RelayCommand]
@@ -334,6 +370,7 @@ namespace FeiPos.Presentation.ViewModels
             }
 
             RefreshCart();
+            SelectedCartItem = Cart.FirstOrDefault(i => i.ProductId == product.Id);
             StatusMessage = $"{product.Name} agregado";
         }
 
@@ -342,13 +379,29 @@ namespace FeiPos.Presentation.ViewModels
         {
             if (!Cart.Any()) return;
 
+            var normalizedPaymentType = string.IsNullOrWhiteSpace(paymentType) || paymentType == "Pago avanzado"
+                ? "Cash"
+                : paymentType;
+
+            if (normalizedPaymentType == "Credit" && SelectedCustomer == null)
+            {
+                StatusMessage = "Seleccione un cliente para venta a credito";
+                CheckoutBlocked?.Invoke(StatusMessage);
+                return;
+            }
+
+            if (!HasEnoughStockForCheckout())
+            {
+                return;
+            }
+
             var sale = BuildSaleFromCurrentOrder();
             sale.Status = SaleStatus.Finalized;
             sale.InvoiceStatus = ElectronicInvoiceStatus.PendingSend;
+            sale.PaymentMethod = normalizedPaymentType;
 
-            var lastSaleCount = _context.Sales.Count(s => s.Status == SaleStatus.Finalized) + 1;
             sale.ConsecutiveNumber = FeiPos.Infrastructure.Helpers.FiscalHelper.GenerateConsecutive(
-                lastSaleCount,
+                GetNextFiscalSequence(),
                 _configService.Config.OfficeId,
                 _configService.Config.TerminalId);
             sale.HaciendaKey = FeiPos.Infrastructure.Helpers.FiscalHelper.GenerateKey(
@@ -364,14 +417,14 @@ namespace FeiPos.Presentation.ViewModels
             StartBlankOrder();
             LoadProducts();
             LoadOpenOrders();
-            StatusMessage = $"Pago {paymentType ?? "rápido"} aplicado";
+            StatusMessage = $"Pago {GetPaymentMethodLabel(normalizedPaymentType)} aplicado";
         }
 
         [RelayCommand]
         private void ShowOperationalMenu()
         {
             LoadOpenOrders();
-            StatusMessage = $"Menú: {OpenOrders.Count} ventas abiertas";
+            StatusMessage = $"Menu: {OpenOrders.Count} ventas abiertas";
         }
 
         private void SearchProducts(string query)
@@ -380,25 +433,29 @@ namespace FeiPos.Presentation.ViewModels
             SearchResults = new ObservableCollection<Product>(matches);
         }
 
-        private IQueryable<Product> FindProducts(string query)
+        private IEnumerable<Product> FindProducts(string query)
         {
             var text = (query ?? string.Empty).Trim();
-            var source = Products.AsQueryable();
 
             if (string.IsNullOrWhiteSpace(text))
             {
-                return source;
+                return Products;
+            }
+
+            if (NormalizeSearchText(text).Length < 2)
+            {
+                return Enumerable.Empty<Product>();
             }
 
             return SelectedSearchMode switch
             {
-                ProductSearchMode.Barcode => source.Where(p => p.Barcode != null && p.Barcode.Contains(text)),
-                ProductSearchMode.Sku => source.Where(p => p.Sku.Contains(text)),
-                ProductSearchMode.Name => source.Where(p => p.Name.Contains(text)),
-                _ => source.Where(p =>
-                    p.Name.Contains(text) ||
-                    p.Sku.Contains(text) ||
-                    (p.Barcode != null && p.Barcode.Contains(text)))
+                ProductSearchMode.Barcode => Products.Where(p => StartsWithSearchText(p.Barcode, text)),
+                ProductSearchMode.Sku => Products.Where(p => StartsWithSearchText(p.Sku, text)),
+                ProductSearchMode.Name => Products.Where(p => NameMatchesSearchText(p.Name, text)),
+                _ => Products.Where(p =>
+                    NameMatchesSearchText(p.Name, text) ||
+                    StartsWithSearchText(p.Sku, text) ||
+                    StartsWithSearchText(p.Barcode, text))
             };
         }
 
@@ -406,12 +463,69 @@ namespace FeiPos.Presentation.ViewModels
         {
             return SelectedSearchMode switch
             {
-                ProductSearchMode.Barcode => product.Barcode == SearchText,
-                ProductSearchMode.Sku => product.Sku == SearchText,
-                ProductSearchMode.Name => product.Name.Equals(SearchText, StringComparison.OrdinalIgnoreCase),
-                _ => product.Barcode == SearchText ||
-                     product.Sku == SearchText ||
-                     product.Name.Equals(SearchText, StringComparison.OrdinalIgnoreCase)
+                ProductSearchMode.Barcode => EqualsSearchText(product.Barcode, SearchText),
+                ProductSearchMode.Sku => EqualsSearchText(product.Sku, SearchText),
+                ProductSearchMode.Name => EqualsSearchText(product.Name, SearchText),
+                _ => EqualsSearchText(product.Barcode, SearchText) ||
+                     EqualsSearchText(product.Sku, SearchText) ||
+                     EqualsSearchText(product.Name, SearchText)
+            };
+        }
+
+        private static bool StartsWithSearchText(string? value, string query)
+        {
+            return NormalizeSearchText(value).StartsWith(NormalizeSearchText(query), StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool NameMatchesSearchText(string? value, string query)
+        {
+            var normalizedValue = NormalizeSearchText(value);
+            var normalizedQuery = NormalizeSearchText(query);
+            return normalizedQuery.Length >= 2 &&
+                   normalizedValue.Contains(normalizedQuery, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool EqualsSearchText(string? value, string query)
+        {
+            return string.Equals(NormalizeSearchText(value), NormalizeSearchText(query), StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string NormalizeSearchText(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return string.Empty;
+
+            var normalized = value.Trim().Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder(normalized.Length);
+            foreach (var ch in normalized)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+                {
+                    builder.Append(ch);
+                }
+            }
+
+            return builder.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private static string GetSearchModeLabel(ProductSearchMode mode)
+        {
+            return mode switch
+            {
+                ProductSearchMode.Barcode => "Codigo de barras",
+                ProductSearchMode.Sku => "SKU",
+                ProductSearchMode.Name => "Nombre",
+                _ => "Todos los campos"
+            };
+        }
+
+        private static string GetPaymentMethodLabel(string paymentMethod)
+        {
+            return paymentMethod switch
+            {
+                "Card" => "tarjeta",
+                "Check" => "cheque",
+                "Credit" => "credito",
+                _ => "efectivo"
             };
         }
 
@@ -441,6 +555,7 @@ namespace FeiPos.Presentation.ViewModels
             sale.TotalTax = Tax;
             sale.TotalDiscount = Discount;
             sale.Comment = OrderComment;
+            sale.PaymentMethod = string.IsNullOrWhiteSpace(sale.PaymentMethod) ? "Cash" : sale.PaymentMethod;
             sale.Customer = SelectedCustomer;
             sale.CustomerId = SelectedCustomer?.Id;
             sale.CustomerName = SelectedCustomer?.FullName;
@@ -476,6 +591,45 @@ namespace FeiPos.Presentation.ViewModels
                     product.Stock -= item.Quantity;
                 }
             }
+        }
+
+        private bool HasEnoughStockForCheckout()
+        {
+            foreach (var group in Cart.GroupBy(i => i.ProductId))
+            {
+                var product = _context.Products.Find(group.Key);
+                if (product == null || product.IsService) continue;
+
+                var requested = group.Sum(i => i.Quantity);
+                if (product.Stock < requested)
+                {
+                    StatusMessage = $"Stock insuficiente para {product.Name}. Disponible: {product.Stock:N2}, solicitado: {requested:N2}";
+                    CheckoutBlocked?.Invoke(StatusMessage);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private long GetNextFiscalSequence()
+        {
+            var prefix = $"{_configService.Config.OfficeId}{_configService.Config.TerminalId}01";
+            var maxSequence = _context.Sales
+                .Where(s => s.ConsecutiveNumber != null && s.ConsecutiveNumber.StartsWith(prefix))
+                .Select(s => s.ConsecutiveNumber!)
+                .AsEnumerable()
+                .Select(GetSequenceFromConsecutive)
+                .DefaultIfEmpty(0)
+                .Max();
+
+            return maxSequence + 1;
+        }
+
+        private static long GetSequenceFromConsecutive(string consecutive)
+        {
+            if (consecutive.Length < 10) return 0;
+            return long.TryParse(consecutive[^10..], out var sequence) ? sequence : 0;
         }
 
         private void ReplaceSaleItems(Sale sale)

@@ -21,5 +21,10 @@ namespace FeiPos.Domain.Entities
         public bool IsService { get; set; }
         public decimal DefaultQuantity { get; set; } = 1;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

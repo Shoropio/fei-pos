@@ -25,6 +25,7 @@ namespace FeiPos.Domain.Entities
         public string? CustomerName { get; set; }
         public string? CustomerTaxId { get; set; }
         public string Comment { get; set; } = string.Empty;
+        public string PaymentMethod { get; set; } = "Cash";
         public ElectronicInvoiceStatus InvoiceStatus { get; set; } = ElectronicInvoiceStatus.None;
     }
 

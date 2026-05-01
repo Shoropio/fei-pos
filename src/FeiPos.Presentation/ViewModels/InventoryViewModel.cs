@@ -43,6 +43,7 @@ namespace FeiPos.Presentation.ViewModels
                 ColorHex = "#455A64",
                 Price = 0,
                 Stock = 0,
+                Barcode = string.Empty,
                 IsActive = true
             };
             _context.Products.Add(newProd);
