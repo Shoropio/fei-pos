@@ -29,3 +29,6 @@ runtime_error.txt
 
 # Accidental nested repository/workspace
 FeiPOS/
+
+# Local config
+appsettings.local.json
