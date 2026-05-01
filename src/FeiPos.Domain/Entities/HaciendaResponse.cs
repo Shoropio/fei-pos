@@ -8,6 +8,8 @@ namespace FeiPos.Domain.Entities
         public Guid SaleId { get; set; }
         public string Key { get; set; } = string.Empty;
         public string Status { get; set; } = "Pending"; // Pending, Accepted, Rejected, Error
+        public string XmlRequest { get; set; } = string.Empty;
+        public string SignedXml { get; set; } = string.Empty;
         public string XmlResponse { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public DateTime ReceivedAt { get; set; } = DateTime.UtcNow;

@@ -27,17 +27,70 @@ namespace FeiPos.Infrastructure.Services
             return await Task.Run(() => Security.XmlDigitalSigner.SignXades(xmlRaw, path, certPin));
         }
 
-        public Task<bool> SendToHacienda(string signedXml, string token)
+        public async Task<bool> SendToHacienda(string signedXml, string token)
         {
-            // POST al endpoint de Hacienda
-            // endpoint: https://api.comprobanteselectronicos.go.cr/recepcion/v1/recepcion
-            return Task.FromResult(true);
+            var key = ExtractKeyFromXml(signedXml);
+            var date = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            
+            var payload = new
+            {
+                clave = key,
+                fecha = date,
+                emisor = ExtractEmisorFromXml(signedXml),
+                receptor = ExtractReceptorFromXml(signedXml),
+                comprobanteXml = Convert.ToBase64String(Encoding.UTF8.GetBytes(signedXml))
+            };
+
+            var request = new HttpRequestMessage(HttpMethod.Post, _configService.Config.HaciendaApiUrl + "recepcion")
+            {
+                Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+            };
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(request);
+            return response.IsSuccessStatusCode;
         }
 
-        public Task<ElectronicInvoiceStatus> CheckStatus(string key)
+        public async Task<ElectronicInvoiceStatus> CheckStatus(string key)
         {
-            // GET al endpoint de Hacienda para consultar estado por Clave
-            return Task.FromResult(ElectronicInvoiceStatus.Accepted);
+            // Nota: Para consultar el estado se requiere token, pero aquí simplificamos el flujo
+            // En una implementación real, se debe obtener un token antes de llamar a este método
+            // o pasarlo como parámetro.
+            
+            var request = new HttpRequestMessage(HttpMethod.Get, _configService.Config.HaciendaApiUrl + "recepcion/" + key);
+            // request.Headers.Authorization = ...
+
+            var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode) return ElectronicInvoiceStatus.PendingSend;
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+            var statusStr = doc.RootElement.GetProperty("ind-estado").GetString();
+
+            return statusStr switch
+            {
+                "aceptado" => ElectronicInvoiceStatus.Accepted,
+                "rechazado" => ElectronicInvoiceStatus.Rejected,
+                _ => ElectronicInvoiceStatus.Sent
+            };
+        }
+
+        private object ExtractEmisorFromXml(string xml)
+        {
+            // Lógica para extraer datos del emisor del XML
+            return new { numeroIdentificacion = _configService.Config.TaxId, tipoIdentificacion = "01" };
+        }
+
+        private object? ExtractReceptorFromXml(string xml)
+        {
+            // Lógica para extraer datos del receptor del XML
+            return null; // Opcional para Factura Electrónica si es Tiquete
+        }
+
+        private string ExtractKeyFromXml(string xml)
+        {
+            // Lógica para extraer la clave de 50 dígitos
+            return _configService.Config.TerminalId; // Placeholder
         }
     }
 }
