@@ -3,61 +3,63 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.modernwpf.com/2019">
     
-    <ScrollViewer Margin="20">
-        <StackPanel MaxWidth="600" HorizontalAlignment="Left">
+    <ScrollViewer Margin="20" VerticalScrollBarVisibility="Auto">
+        <StackPanel HorizontalAlignment="Stretch">
             <TextBlock Text="Configuración del Sistema" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,25"/>
 
-            <GroupBox Header="Datos del Negocio" Margin="0,0,0,20">
-                <StackPanel Margin="10">
-                    <TextBlock Text="Cédula Física/Jurídica" Margin="0,10,0,5"/>
-                    <TextBox Text="{Binding Config.TaxId}"/>
-                    
-                    <Grid Margin="0,10,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Margin="0,0,5,0">
-                            <TextBlock Text="N° de Local (Casa Matriz)" Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding Config.OfficeId}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
-                            <TextBlock Text="N° de Terminal" Margin="0,0,0,5"/>
-                            <TextBox Text="{Binding Config.TerminalId}"/>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
+            <WrapPanel Orientation="Horizontal">
+                <GroupBox Header="Datos del Negocio" Margin="0,0,20,20" Width="500">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Cédula Física/Jurídica" Margin="0,10,0,5"/>
+                        <TextBox Text="{Binding Config.TaxId}"/>
+                        
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,5,0">
+                                <TextBlock Text="N° de Local (Casa Matriz)" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding Config.OfficeId}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                                <TextBlock Text="N° de Terminal" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding Config.TerminalId}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
 
-            <GroupBox Header="Credenciales de Hacienda (ATV)" Margin="0,0,0,20">
-                <StackPanel Margin="10">
-                    <TextBlock Text="Usuario de Comprobantes Electrónicos" Margin="0,10,0,5"/>
-                    <TextBox Text="{Binding Config.ApiUsername}"/>
+                <GroupBox Header="Credenciales de Hacienda (ATV)" Margin="0,0,20,20" Width="500">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Usuario de Comprobantes Electrónicos" Margin="0,10,0,5"/>
+                        <TextBox Text="{Binding Config.ApiUsername}"/>
 
-                    <TextBlock Text="Contraseña de Comprobantes" Margin="0,10,0,5"/>
-                    <PasswordBox x:Name="ApiPasswordBox"/>
-                </StackPanel>
-            </GroupBox>
+                        <TextBlock Text="Contraseña de Comprobantes" Margin="0,10,0,5"/>
+                        <PasswordBox x:Name="ApiPasswordBox"/>
+                    </StackPanel>
+                </GroupBox>
 
-            <GroupBox Header="Firma Digital" Margin="0,0,0,20">
-                <StackPanel Margin="10">
-                    <TextBlock Text="Ruta del Certificado (.p12 / .pfx)" Margin="0,10,0,5"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding Config.CertificatePath}"/>
-                        <Button Grid.Column="1" Content="..." Margin="5,0,0,0"/>
-                    </Grid>
+                <GroupBox Header="Firma Digital" Margin="0,0,20,20" Width="500">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Ruta del Certificado (.p12 / .pfx)" Margin="0,10,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding Config.CertificatePath}"/>
+                            <Button Grid.Column="1" Content="..." Margin="5,0,0,0"/>
+                        </Grid>
 
-                    <TextBlock Text="PIN del Certificado" Margin="0,10,0,5"/>
-                    <PasswordBox x:Name="CertPinBox"/>
-                </StackPanel>
-            </GroupBox>
+                        <TextBlock Text="PIN del Certificado" Margin="0,10,0,5"/>
+                        <PasswordBox x:Name="CertPinBox"/>
+                    </StackPanel>
+                </GroupBox>
+            </WrapPanel>
 
             <Button Content="Guardar Configuración" Style="{StaticResource AccentButtonStyle}" 
-                    Height="45" HorizontalAlignment="Stretch" Margin="0,20,0,40"
+                    Height="45" Width="300" HorizontalAlignment="Left" Margin="0,20,0,40"
                     Command="{Binding SaveCommand}"/>
         </StackPanel>
     </ScrollViewer>

@@ -21,6 +21,7 @@ namespace FeiPos.Presentation.ViewModels
         private readonly IHaciendaService _haciendaService;
         private readonly ConfigurationService _configService;
         private readonly EscPosPrinterService _printerService;
+        private readonly AuthService _authService;
 
         private Guid? _currentDraftSaleId;
 
@@ -69,6 +70,8 @@ namespace FeiPos.Presentation.ViewModels
         [ObservableProperty]
         private string _statusMessage = "Venta lista";
 
+        public bool CanRunSensitiveActions => _authService.IsAdmin;
+
         public ObservableCollection<ProductSearchMode> SearchModes { get; } = new(
             Enum.GetValues<ProductSearchMode>());
 
@@ -79,12 +82,14 @@ namespace FeiPos.Presentation.ViewModels
             AppDbContext context,
             IHaciendaService haciendaService,
             ConfigurationService configService,
-            EscPosPrinterService printerService)
+            EscPosPrinterService printerService,
+            AuthService authService)
         {
             _context = context;
             _haciendaService = haciendaService;
             _configService = configService;
             _printerService = printerService;
+            _authService = authService;
 
             LoadProducts();
             LoadCustomers();
@@ -241,6 +246,13 @@ namespace FeiPos.Presentation.ViewModels
         [RelayCommand]
         private void RemoveSelectedItem()
         {
+            if (!CanRunSensitiveActions)
+            {
+                StatusMessage = "Permiso de administrador requerido para eliminar lineas.";
+                CheckoutBlocked?.Invoke(StatusMessage);
+                return;
+            }
+
             if (SelectedCartItem == null)
             {
                 if (Cart.Count == 1)
@@ -274,6 +286,13 @@ namespace FeiPos.Presentation.ViewModels
         [RelayCommand]
         private void VoidOrder()
         {
+            if (!CanRunSensitiveActions)
+            {
+                StatusMessage = "Permiso de administrador requerido para anular la orden.";
+                CheckoutBlocked?.Invoke(StatusMessage);
+                return;
+            }
+
             if (_currentDraftSaleId.HasValue)
             {
                 var sale = _context.Sales
@@ -296,6 +315,13 @@ namespace FeiPos.Presentation.ViewModels
         [RelayCommand]
         private void ApplyDiscount(decimal? amount)
         {
+            if (!CanRunSensitiveActions)
+            {
+                StatusMessage = "Permiso de administrador requerido para aplicar descuentos.";
+                CheckoutBlocked?.Invoke(StatusMessage);
+                return;
+            }
+
             if (!Cart.Any()) return;
 
             Discount = amount.HasValue && amount.Value >= 0
@@ -648,14 +674,35 @@ namespace FeiPos.Presentation.ViewModels
 
         private async Task SendFiscalDocumentAsync(Sale sale)
         {
+            var response = new HaciendaResponse
+            {
+                SaleId = sale.Id,
+                Key = sale.HaciendaKey ?? string.Empty,
+                Status = "Pending",
+                Message = "Documento fiscal generado y pendiente de envio.",
+                ReceivedAt = DateTime.UtcNow
+            };
+
             try
             {
                 var xml = await _haciendaService.GenerateXml(sale);
-                await _haciendaService.SignXml(xml, string.Empty, string.Empty);
+                var signedXml = await _haciendaService.SignXml(xml, string.Empty, string.Empty);
+                response.XmlRequest = xml;
+                response.SignedXml = signedXml;
+                response.Status = "Signed";
+                response.Message = "XML generado y firmado. Envio a Hacienda pendiente.";
+                sale.InvoiceStatus = ElectronicInvoiceStatus.PendingSend;
             }
-            catch
+            catch (Exception ex)
             {
-                // La cola fiscal persistente queda como siguiente paso; no bloquea caja.
+                response.Status = "Error";
+                response.Message = ex.Message;
+                sale.InvoiceStatus = ElectronicInvoiceStatus.Error;
+            }
+            finally
+            {
+                _context.HaciendaResponses.Add(response);
+                await _context.SaveChangesAsync();
             }
         }
 

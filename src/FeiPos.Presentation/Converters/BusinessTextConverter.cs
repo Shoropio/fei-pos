@@ -19,6 +19,15 @@ namespace FeiPos.Presentation.Converters
                 "Draft" => "Abierta",
                 "Finalized" => "Finalizada",
                 "Cancelled" => "Anulada",
+                "PendingSend" => "Pendiente",
+                "Sent" => "Enviada",
+                "Accepted" => "Aceptada",
+                "Rejected" => "Rechazada",
+                "Error" => "Error",
+                "Signed" => "Firmada",
+                "CreditNotePending" => "NC pendiente",
+                "Sin registro" => "Sin registro",
+                "None" => "Sin estado",
                 var text => text ?? string.Empty
             };
         }

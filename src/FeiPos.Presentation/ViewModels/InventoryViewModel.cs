@@ -33,11 +33,26 @@ namespace FeiPos.Presentation.ViewModels
         [RelayCommand]
         private void AddProduct()
         {
-            var next = _context.Products.Count() + 1;
+            // Evitar agregar múltiples productos vacíos si ya existe uno llamado "Nuevo Producto" sin cambios
+            var existingEmpty = Products.FirstOrDefault(p => p.Name == "Nuevo Producto" && p.Price == 0 && p.Stock == 0);
+            if (existingEmpty != null)
+            {
+                SelectedProduct = existingEmpty;
+                return;
+            }
+
+            var lastSku = _context.Products
+                .Where(p => p.Sku.StartsWith("PROD"))
+                .Select(p => p.Sku)
+                .AsEnumerable()
+                .Select(s => int.TryParse(s.Substring(4), out var n) ? n : 0)
+                .DefaultIfEmpty(0)
+                .Max();
+
             var newProd = new Product
             {
                 Name = "Nuevo Producto",
-                Sku = $"NEW{next:000}",
+                Sku = $"PROD{(lastSku + 1):D3}",
                 GroupName = "General",
                 UnitOfMeasure = "Unid",
                 ColorHex = "#455A64",
@@ -49,7 +64,7 @@ namespace FeiPos.Presentation.ViewModels
             _context.Products.Add(newProd);
             _context.SaveChanges();
             LoadProducts();
-            SelectedProduct = newProd;
+            SelectedProduct = Products.FirstOrDefault(p => p.Sku == newProd.Sku);
         }
 
         [RelayCommand]
@@ -57,6 +72,15 @@ namespace FeiPos.Presentation.ViewModels
         {
             _context.SaveChanges();
             LoadProducts();
+        }
+
+        [RelayCommand]
+        private void SetProductColor(string hex)
+        {
+            if (SelectedProduct != null)
+            {
+                SelectedProduct.ColorHex = hex;
+            }
         }
     }
 }

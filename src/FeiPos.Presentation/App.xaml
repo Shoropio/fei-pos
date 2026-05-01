@@ -51,6 +51,7 @@
                 <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Padding" Value="12,7"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
             </Style>
 
             <Style TargetType="TextBox">
@@ -59,6 +60,9 @@
                 <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
                 <Setter Property="SelectionBrush" Value="{StaticResource AppAccentBrush}"/>
                 <Setter Property="Padding" Value="8,5"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
             </Style>
 
             <Style TargetType="PasswordBox">
@@ -67,13 +71,26 @@
                 <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
                 <Setter Property="SelectionBrush" Value="{StaticResource AppAccentBrush}"/>
                 <Setter Property="Padding" Value="8,5"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
             </Style>
 
-            <Style TargetType="ComboBox">
+            <Style TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">
                 <Setter Property="Foreground" Value="{StaticResource AppTextBrush}"/>
                 <Setter Property="Background" Value="{StaticResource AppPanelAltBrush}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
                 <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
+            </Style>
+
+            <Style TargetType="DatePicker" BasedOn="{StaticResource DefaultDatePickerStyle}">
+                <Setter Property="Foreground" Value="{StaticResource AppTextBrush}"/>
+                <Setter Property="Background" Value="{StaticResource AppPanelAltBrush}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
             </Style>
 
             <Style TargetType="CheckBox">
@@ -85,6 +102,51 @@
                 <Setter Property="Background" Value="{StaticResource AppPanelBrush}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
                 <Setter Property="Padding" Value="12"/>
+            </Style>
+
+            <Style TargetType="ui:AutoSuggestBox">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
+            </Style>
+
+            <Style TargetType="TabControl">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="0,1,0,0"/>
+                <Setter Property="Padding" Value="0,10,0,0"/>
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="0"/>
+            </Style>
+
+            <Style TargetType="TabItem">
+                <Setter Property="Padding" Value="15,8"/>
+                <Setter Property="Margin" Value="0,0,2,0"/>
+                <Setter Property="Foreground" Value="#A0A0A0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Grid x:Name="Root">
+                                <Border x:Name="Border" 
+                                        Background="#353535" 
+                                        BorderThickness="0" 
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter x:Name="ContentSite"
+                                                      ContentSource="Header"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource AppAccentBrush}"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#454545"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
 
             <Style TargetType="DataGrid">

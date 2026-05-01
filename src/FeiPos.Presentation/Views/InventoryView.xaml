@@ -35,7 +35,7 @@
         </Grid>
 
         <Border Grid.Column="1" Background="{StaticResource AppPanelBrush}"
-                CornerRadius="8" Padding="15" Visibility="{Binding SelectedProduct, Converter={StaticResource NullToVisibilityConverter}}">
+                CornerRadius="0" Padding="15" Visibility="{Binding SelectedProduct, Converter={StaticResource NullToVisibilityConverter}}">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Text="Producto POS" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,0,0,15"/>
@@ -50,7 +50,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Margin="0,0,5,0">
                             <TextBlock Text="SKU" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding SelectedProduct.Sku, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Text="{Binding SelectedProduct.Sku, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Opacity="0.7"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,0,0">
                             <TextBlock Text="Grupo" Margin="0,0,0,4"/>
@@ -102,7 +102,43 @@
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,0,0">
                             <TextBlock Text="Color visual" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding SelectedProduct.ColorHex, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{Binding SelectedProduct.ColorHex, UpdateSourceTrigger=PropertyChanged}"/>
+                                <Button Grid.Column="1" Width="32" Height="32" Margin="5,0,0,0" 
+                                        Background="{Binding SelectedProduct.ColorHex}" 
+                                        BorderBrush="{StaticResource AppBorderBrush}" 
+                                        BorderThickness="1" Padding="0">
+                                    <ui:FlyoutService.Flyout>
+                                        <ui:Flyout>
+                                            <StackPanel Width="200">
+                                                <TextBlock Text="Seleccionar color" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                                <UniformGrid Columns="5">
+                                                    <!-- Paleta de colores predefinida -->
+                                                    <Button Background="#455A64" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#455A64"/>
+                                                    <Button Background="#D32F2F" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#D32F2F"/>
+                                                    <Button Background="#C2185B" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#C2185B"/>
+                                                    <Button Background="#7B1FA2" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#7B1FA2"/>
+                                                    <Button Background="#512DA8" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#512DA8"/>
+                                                    <Button Background="#303F9F" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#303F9F"/>
+                                                    <Button Background="#1976D2" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#1976D2"/>
+                                                    <Button Background="#0288D1" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#0288D1"/>
+                                                    <Button Background="#0097A7" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#0097A7"/>
+                                                    <Button Background="#00796B" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#00796B"/>
+                                                    <Button Background="#388E3C" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#388E3C"/>
+                                                    <Button Background="#689F38" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#689F38"/>
+                                                    <Button Background="#AFB42B" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#AFB42B"/>
+                                                    <Button Background="#FBC02D" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#FBC02D"/>
+                                                    <Button Background="#FFA000" Width="30" Height="30" Margin="2" Command="{Binding DataContext.SetProductColorCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="#FFA000"/>
+                                                </UniformGrid>
+                                            </StackPanel>
+                                        </ui:Flyout>
+                                    </ui:FlyoutService.Flyout>
+                                </Button>
+                            </Grid>
                         </StackPanel>
                     </Grid>
 

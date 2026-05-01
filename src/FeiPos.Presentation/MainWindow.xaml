@@ -70,6 +70,9 @@
                 <ui:NavigationViewItem Icon="List" Tag="SalesHistory">
                     <TextBlock Text="Historial ventas" Margin="20,0,0,0"/>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="Document" Tag="FiscalInvoices">
+                    <TextBlock Text="Facturas" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Icon="Library" Tag="OpenOrders">
                     <TextBlock Text="Ventas abiertas" Margin="20,0,0,0"/>
                 </ui:NavigationViewItem>
@@ -90,6 +93,9 @@
                 <ui:NavigationViewItem Icon="Setting" Tag="Settings">
                     <TextBlock Text="Configuración" Margin="20,0,0,0"/>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="LeaveChat" Tag="Logout">
+                    <TextBlock Text="Cerrar sesion" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
 
             <ContentControl x:Name="ContentFrame" Margin="12">
@@ -104,11 +110,19 @@
         <Border Grid.Row="0"
                 Background="#101010"
                 MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-            <TextBlock Text="Fei POS - Sistema de Punto de Venta"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       Margin="12,0,0,0"
-                       FontSize="12"/>
+            <Grid>
+                <TextBlock Text="Fei POS - Sistema de Punto de Venta"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           Margin="12,0,0,0"
+                           FontSize="12"/>
+                <TextBlock x:Name="SessionText"
+                           Foreground="#B8B8B8"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Margin="0,0,184,0"
+                           FontSize="12"/>
+            </Grid>
         </Border>
 
         <StackPanel Grid.Row="0"

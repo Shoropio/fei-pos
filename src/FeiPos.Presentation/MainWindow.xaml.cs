@@ -6,18 +6,22 @@ using Microsoft.Extensions.DependencyInjection;
 using ModernWpf.Controls;
 using FeiPos.Presentation.ViewModels;
 using FeiPos.Presentation.Views;
+using FeiPos.Infrastructure.Services;
 
 namespace FeiPos.Presentation
 {
     public partial class MainWindow : Window
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly AuthService _authService;
         private bool _isFullScreen;
 
-        public MainWindow(IServiceProvider serviceProvider)
+        public MainWindow(IServiceProvider serviceProvider, AuthService authService)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider;
+            _authService = authService;
+            SessionText.Text = $"{_authService.CurrentUserName} ({_authService.CurrentUser?.Role})";
             
             this.Loaded += (s, e) => {
                 // Arrancar directo en caja; el menú queda oculto hasta pedirlo.
@@ -138,11 +142,25 @@ namespace FeiPos.Presentation
 
         public void NavigateToTag(string tag)
         {
+            if (tag == "Logout")
+            {
+                _authService.Logout();
+                ShowLoginAfterLogout();
+                return;
+            }
+
+            if (!CanNavigate(tag))
+            {
+                MessageBox.Show("No tiene permiso para abrir esta pantalla.", "Permiso requerido", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             object? view = tag switch
             {
                 "Dashboard" => new DashboardView { DataContext = _serviceProvider.GetRequiredService<DashboardViewModel>() },
                 "Sales" => new SalesView { DataContext = _serviceProvider.GetRequiredService<SalesViewModel>() },
                 "SalesHistory" => new SalesHistoryView { DataContext = _serviceProvider.GetRequiredService<SalesHistoryViewModel>() },
+                "FiscalInvoices" => new FiscalInvoicesView { DataContext = _serviceProvider.GetRequiredService<FiscalInvoicesViewModel>() },
                 "OpenOrders" => new OpenOrdersView { DataContext = _serviceProvider.GetRequiredService<OpenOrdersViewModel>() },
                 "CashDrawer" => new CashDrawerView { DataContext = _serviceProvider.GetRequiredService<CashDrawerViewModel>() },
                 "DayClose" => new DayCloseView { DataContext = _serviceProvider.GetRequiredService<DayCloseViewModel>() },
@@ -160,6 +178,32 @@ namespace FeiPos.Presentation
                 ContentFrame.Content = view;
                 NavView.IsPaneOpen = false;
             }
+        }
+
+        private bool CanNavigate(string tag)
+        {
+            if (_authService.IsAdmin)
+            {
+                return true;
+            }
+
+            return tag is "Sales" or "OpenOrders" or "Customers";
+        }
+
+        private void ShowLoginAfterLogout()
+        {
+            Hide();
+
+            var loginWindow = _serviceProvider.GetRequiredService<LoginWindow>();
+            if (loginWindow.ShowDialog() == true && _authService.IsAuthenticated)
+            {
+                SessionText.Text = $"{_authService.CurrentUserName} ({_authService.CurrentUser?.Role})";
+                Show();
+                NavigateToTag("Sales");
+                return;
+            }
+
+            Close();
         }
     }
 }

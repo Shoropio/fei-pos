@@ -9,7 +9,7 @@
 
             <!-- Tarjetas de Métricas -->
             <UniformGrid Columns="3" Margin="0,0,0,30">
-                <Border Background="{StaticResource AppPanelBrush}" Margin="5" Padding="20" CornerRadius="8">
+                <Border Background="{StaticResource AppPanelBrush}" Margin="5" Padding="20" CornerRadius="0">
                     <StackPanel>
                         <ui:SymbolIcon Symbol="List" Margin="0,0,0,10" HorizontalAlignment="Left"/>
                         <TextBlock Text="Ventas del Día" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
@@ -17,7 +17,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Background="{StaticResource AppPanelBrush}" Margin="5" Padding="20" CornerRadius="8">
+                <Border Background="{StaticResource AppPanelBrush}" Margin="5" Padding="20" CornerRadius="0">
                     <StackPanel>
                         <ui:SymbolIcon Symbol="Calculator" Margin="0,0,0,10" HorizontalAlignment="Left"/>
                         <TextBlock Text="IVA Recaudado" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
@@ -25,7 +25,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Background="{StaticResource AppPanelBrush}" Margin="5" Padding="20" CornerRadius="8">
+                <Border Background="{StaticResource AppPanelBrush}" Margin="5" Padding="20" CornerRadius="0">
                     <StackPanel>
                         <ui:SymbolIcon Symbol="Tag" Margin="0,0,0,10" HorizontalAlignment="Left"/>
                         <TextBlock Text="Transacciones" Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
@@ -36,7 +36,7 @@
 
             <!-- Ranking de Productos -->
             <TextBlock Text="Top 5 Productos Más Vendidos" Style="{StaticResource SubtitleTextBlockStyle}" Margin="5,0,0,15"/>
-            <Border Background="{StaticResource AppPanelBrush}" CornerRadius="8" Padding="10">
+            <Border Background="{StaticResource AppPanelBrush}" CornerRadius="0" Padding="10">
                 <ItemsControl ItemsSource="{Binding TopProducts}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
