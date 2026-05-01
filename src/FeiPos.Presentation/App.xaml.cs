@@ -41,6 +41,7 @@ namespace FeiPos.Presentation
                 options.UseSqlite("Data Source=feipos.db"));
 
             services.AddSingleton<ConfigurationService>();
+            services.AddScoped<AuthService>();
             services.AddHttpClient<IHaciendaService, HaciendaService>();
             services.AddHttpClient<HaciendaIdentityService>();
             services.AddSingleton<EscPosPrinterService>();
@@ -56,7 +57,12 @@ namespace FeiPos.Presentation
             services.AddTransient<DayCloseViewModel>();
             services.AddTransient<UsersViewModel>();
             services.AddTransient<CreditAccountsViewModel>();
-            services.AddTransient<MainWindow>();
+            services.AddTransient<FiscalInvoicesViewModel>();
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<Views.LoginWindow>();
+            services.AddSingleton<MainWindow>();
+            services.AddSingleton<FeiPos.Infrastructure.BackgroundServices.HaciendaQueueWorker>();
+            services.AddLogging();
             
             // Importante: Registrar el propio IServiceProvider para la navegación
             services.AddSingleton<IServiceProvider>(sp => sp);
@@ -68,13 +74,28 @@ namespace FeiPos.Presentation
 
             try
             {
+                ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                     DbInitializer.Initialize(dbContext);
                 }
 
+                // Iniciar el trabajador de la cola de Hacienda
+                var worker = _serviceProvider.GetRequiredService<FeiPos.Infrastructure.BackgroundServices.HaciendaQueueWorker>();
+                _ = worker.StartAsync(CancellationToken.None);
+
+                var loginWindow = _serviceProvider.GetRequiredService<Views.LoginWindow>();
+                if (loginWindow.ShowDialog() != true)
+                {
+                    Shutdown();
+                    return;
+                }
+
                 var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+                MainWindow = mainWindow;
+                ShutdownMode = ShutdownMode.OnMainWindowClose;
                 mainWindow.Show();
             }
             catch (Exception ex)
