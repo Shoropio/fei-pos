@@ -28,13 +28,13 @@
                     <DataGridTextColumn Header="SKU" Binding="{Binding Sku}" Width="90"/>
                     <DataGridTextColumn Header="Grupo" Binding="{Binding GroupName}" Width="120"/>
                     <DataGridTextColumn Header="Nombre" Binding="{Binding Name}" Width="*"/>
-                    <DataGridTextColumn Header="Precio" Binding="{Binding Price, StringFormat=C}" Width="100"/>
+                    <DataGridTextColumn Header="Precio" Binding="{Binding Price, StringFormat=₡{0:N2}}" Width="100"/>
                     <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="80"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
 
-        <Border Grid.Column="1" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+        <Border Grid.Column="1" Background="{StaticResource AppPanelBrush}"
                 CornerRadius="8" Padding="15" Visibility="{Binding SelectedProduct, Converter={StaticResource NullToVisibilityConverter}}">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
@@ -72,7 +72,7 @@
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,0,0">
                             <TextBlock Text="Cantidad default" Margin="0,0,0,4"/>
-                            <ui:NumberBox Value="{Binding SelectedProduct.DefaultQuantity, UpdateSourceTrigger=PropertyChanged}" SpinButtonPlacementMode="Inline"/>
+                            <TextBox Text="{Binding SelectedProduct.DefaultQuantity, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
@@ -83,11 +83,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Margin="0,0,5,0">
                             <TextBlock Text="Precio" Margin="0,0,0,4"/>
-                            <ui:NumberBox Value="{Binding SelectedProduct.Price, UpdateSourceTrigger=PropertyChanged}" SpinButtonPlacementMode="Inline"/>
+                            <TextBox Text="{Binding SelectedProduct.Price, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,0,0">
                             <TextBlock Text="IVA (%)" Margin="0,0,0,4"/>
-                            <ui:NumberBox Value="{Binding SelectedProduct.TaxRate, UpdateSourceTrigger=PropertyChanged}" SpinButtonPlacementMode="Inline"/>
+                            <TextBox Text="{Binding SelectedProduct.TaxRate, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
@@ -98,7 +98,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Margin="0,0,5,0">
                             <TextBlock Text="Stock" Margin="0,0,0,4"/>
-                            <ui:NumberBox Value="{Binding SelectedProduct.Stock, UpdateSourceTrigger=PropertyChanged}" SpinButtonPlacementMode="Inline"/>
+                            <TextBox Text="{Binding SelectedProduct.Stock, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="5,0,0,0">
                             <TextBlock Text="Color visual" Margin="0,0,0,4"/>

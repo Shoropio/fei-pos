@@ -7,6 +7,7 @@ using FeiPos.Infrastructure.Persistence;
 using FeiPos.Presentation.ViewModels;
 using FeiPos.Application.Interfaces;
 using FeiPos.Infrastructure.Services;
+using ModernWpf;
 
 namespace FeiPos.Presentation
 {
@@ -16,6 +17,8 @@ namespace FeiPos.Presentation
 
         public App()
         {
+            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+
             // Captura de excepciones globales
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             
@@ -47,6 +50,12 @@ namespace FeiPos.Presentation
             services.AddTransient<InventoryViewModel>();
             services.AddTransient<CustomerViewModel>();
             services.AddTransient<DashboardViewModel>();
+            services.AddTransient<SalesHistoryViewModel>();
+            services.AddTransient<OpenOrdersViewModel>();
+            services.AddTransient<CashDrawerViewModel>();
+            services.AddTransient<DayCloseViewModel>();
+            services.AddTransient<UsersViewModel>();
+            services.AddTransient<CreditAccountsViewModel>();
             services.AddTransient<MainWindow>();
             
             // Importante: Registrar el propio IServiceProvider para la navegación

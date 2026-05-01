@@ -1,0 +1,39 @@
+<UserControl x:Class="FeiPos.Presentation.Views.SalesHistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="160"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,12">
+            <TextBlock Text="Historial de ventas" Style="{StaticResource TitleTextBlockStyle}" DockPanel.Dock="Left"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBox Width="220" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0"/>
+                <Button Content="Buscar" Command="{Binding LoadSalesCommand}" Margin="0,0,8,0"/>
+                <Button Content="Anular seleccionada" Command="{Binding VoidSelectedCommand}"/>
+            </StackPanel>
+        </DockPanel>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Sales}" SelectedItem="{Binding SelectedSale}" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Fecha" Binding="{Binding CreatedAt, StringFormat=g}" Width="150"/>
+                <DataGridTextColumn Header="Cliente" Binding="{Binding CustomerName}" Width="*"/>
+                <DataGridTextColumn Header="Metodo" Binding="{Binding PaymentMethod, Converter={StaticResource BusinessTextConverter}}" Width="110"/>
+                <DataGridTextColumn Header="Estado" Binding="{Binding Status, Converter={StaticResource BusinessTextConverter}}" Width="110"/>
+                <DataGridTextColumn Header="Líneas" Binding="{Binding ItemCount}" Width="80"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=₡{0:N2}}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0,12,0,0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Producto" Binding="{Binding ProductName}" Width="*"/>
+                <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantity}" Width="120"/>
+                <DataGridTextColumn Header="Precio" Binding="{Binding UnitPrice, StringFormat=₡{0:N2}}" Width="120"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=₡{0:N2}}" Width="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Margin="0,10,0,0"/>
+    </Grid>
+</UserControl>

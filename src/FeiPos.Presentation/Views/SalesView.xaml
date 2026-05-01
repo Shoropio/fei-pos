@@ -16,13 +16,14 @@
         <SolidColorBrush x:Key="PosRedBrush" Color="#C82D2D"/>
 
         <Style x:Key="ModeButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-            <Setter Property="Width" Value="48"/>
+            <Setter Property="Width" Value="50"/>
             <Setter Property="Height" Value="50"/>
             <Setter Property="Margin" Value="0"/>
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#2E2E2E"/>
-            <Setter Property="BorderBrush" Value="#2E2E2E"/>
+            <Setter Property="Background" Value="#252525"/>
+            <Setter Property="BorderBrush" Value="#252525"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
         <Style x:Key="PosButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
@@ -40,6 +41,16 @@
         <Style x:Key="PayMethodButtonStyle" TargetType="Button" BasedOn="{StaticResource PosButtonStyle}">
             <Setter Property="MinHeight" Value="52"/>
             <Setter Property="BorderThickness" Value="1,1,1,3"/>
+        </Style>
+
+        <Style x:Key="PayButtonStyle" TargetType="Button" BasedOn="{StaticResource PosButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource PosGreenBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PosGreenBrush}"/>
+        </Style>
+
+        <Style x:Key="VoidButtonStyle" TargetType="Button" BasedOn="{StaticResource PosButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource PosRedBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PosRedBrush}"/>
         </Style>
 
         <Style x:Key="ActionIconTextStyle" TargetType="TextBlock">
@@ -111,31 +122,68 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button Content="*" Command="{Binding SetSearchModeCommand}" CommandParameter="{x:Static vm:ProductSearchMode.AllFields}" Style="{StaticResource ModeButtonStyle}"/>
-                    <Button Grid.Column="1" Content="|||"
+                    <Button Command="{Binding SetSearchModeCommand}"
+                            CommandParameter="{x:Static vm:ProductSearchMode.AllFields}"
+                            ToolTip="Todos los campos"
+                            Style="{StaticResource ModeButtonStyle}">
+                        <TextBlock Text="*" FontSize="28" FontWeight="Light" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Button Grid.Column="1"
                             Command="{Binding SetSearchModeCommand}"
                             CommandParameter="{x:Static vm:ProductSearchMode.Barcode}"
-                            Style="{StaticResource ModeButtonStyle}"/>
-                    <Button Grid.Column="2" Content="#"
+                            ToolTip="Código de barras"
+                            Style="{StaticResource ModeButtonStyle}">
+                        <TextBlock Text="||||||" FontSize="16" FontWeight="Light" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Button Grid.Column="2"
                             Command="{Binding SetSearchModeCommand}"
                             CommandParameter="{x:Static vm:ProductSearchMode.Sku}"
-                            Style="{StaticResource ModeButtonStyle}"/>
-                    <Button Grid.Column="3" Content="Tag"
-                            Command="{Binding SetSearchModeCommand}"
+                            ToolTip="SKU / código"
+                            Style="{StaticResource ModeButtonStyle}">
+                        <TextBlock Text="#" FontSize="22" FontWeight="Light" HorizontalAlignment="Center"/>
+                    </Button>
+                    <Button Grid.Column="3" Command="{Binding SetSearchModeCommand}"
                             CommandParameter="{x:Static vm:ProductSearchMode.Name}"
-                            Foreground="{StaticResource PosBlueBrush}"
-                            FontSize="13"
-                            Style="{StaticResource ModeButtonStyle}"/>
+                            ToolTip="Nombre"
+                            Style="{StaticResource ModeButtonStyle}">
+                        <TextBlock Text="&#xE8EC;"
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="18"
+                                   Foreground="{StaticResource PosBlueBrush}"
+                                   HorizontalAlignment="Center"/>
+                    </Button>
 
                     <ui:AutoSuggestBox Grid.Column="4"
                                        x:Name="SearchBox"
                                        QueryIcon="Find"
                                        FontSize="14"
                                        PlaceholderText="Buscar producto por nombre"
+                                       ItemsSource="{Binding SearchResults}"
+                                       TextMemberPath="Name"
                                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
                                        QuerySubmitted="SearchBox_QuerySubmitted"
                                        VerticalAlignment="Center"
-                                       Margin="6,0,12,0"/>
+                                       Margin="6,0,12,0">
+                        <ui:AutoSuggestBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid MinWidth="420" Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="110"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Sku}" FontSize="12" Opacity="0.75"/>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Price, StringFormat=₡{0:N2}}"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ui:AutoSuggestBox.ItemTemplate>
+                    </ui:AutoSuggestBox>
                 </Grid>
             </Border>
 
@@ -155,8 +203,8 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Nombre del producto" Binding="{Binding ProductName}" Width="*" />
                         <DataGridTextColumn Header="Cantidad" Binding="{Binding Quantity}" Width="120" />
-                        <DataGridTextColumn Header="Precio" Binding="{Binding UnitPrice, StringFormat=N2}" Width="120" />
-                        <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=N2}" Width="120" />
+                        <DataGridTextColumn Header="Precio" Binding="{Binding UnitPrice, StringFormat=₡{0:N2}}" Width="120" />
+                        <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=₡{0:N2}}" Width="120" />
                     </DataGrid.Columns>
                 </DataGrid>
 
@@ -193,16 +241,16 @@
                     <StackPanel Grid.Column="1" Margin="0,0,30,0">
                         <Grid Height="28">
                             <TextBlock Text="Subtotal" Foreground="White" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding Subtotal, StringFormat=N2}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
+                            <TextBlock Text="{Binding Subtotal, StringFormat=₡{0:N2}}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
                         </Grid>
                         <Grid Height="28">
                             <TextBlock Text="Impuestos" Foreground="White" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding Tax, StringFormat=N2}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
+                            <TextBlock Text="{Binding Tax, StringFormat=₡{0:N2}}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="18"/>
                         </Grid>
                         <Border BorderBrush="#666666" BorderThickness="0,1,0,0" Margin="0,6,0,0"/>
                         <Grid Height="38" Margin="0,4,0,0">
                             <TextBlock Text="TOTAL" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
-                            <TextBlock Text="{Binding Total, StringFormat=N2}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="22" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding Total, StringFormat=₡{0:N2}}" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="22" FontWeight="Bold"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
@@ -228,14 +276,14 @@
             <Button Grid.Row="0" Grid.Column="0" Command="{Binding SearchCommand}" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="F3" FontWeight="Bold"/>
-                    <TextBlock Text="Search" FontSize="24" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Buscar" FontSize="24" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Buscar" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
             <Button Grid.Row="0" Grid.Column="1" Command="{Binding QtyCommand}" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="F4" FontWeight="Bold"/>
-                    <TextBlock Text="Qty +" FontSize="24" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Cant. +" FontSize="24" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Cantidad" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
@@ -247,9 +295,9 @@
                 </StackPanel>
             </Button>
 
-            <Button Grid.Row="1" Grid.Column="0" Command="{Binding CheckoutCommand}" CommandParameter="Cash" BorderBrush="#438A4E" Style="{StaticResource PayMethodButtonStyle}" Content="F12  Cash"/>
-            <Button Grid.Row="1" Grid.Column="1" Command="{Binding CheckoutCommand}" CommandParameter="Card" BorderBrush="{StaticResource PosBlueBrush}" Style="{StaticResource PayMethodButtonStyle}" Content="Card"/>
-            <Button Grid.Row="1" Grid.Column="2" Command="{Binding CheckoutCommand}" CommandParameter="Check" BorderBrush="{StaticResource PosBlueBrush}" Style="{StaticResource PayMethodButtonStyle}" Content="Check"/>
+            <Button Grid.Row="1" Grid.Column="0" Command="{Binding CheckoutCommand}" CommandParameter="Cash" BorderBrush="#438A4E" Style="{StaticResource PayMethodButtonStyle}" Content="F12  Efectivo"/>
+            <Button Grid.Row="1" Grid.Column="1" Command="{Binding CheckoutCommand}" CommandParameter="Card" BorderBrush="{StaticResource PosBlueBrush}" Style="{StaticResource PayMethodButtonStyle}" Content="Tarjeta"/>
+            <Button Grid.Row="1" Grid.Column="2" Command="{Binding CheckoutCommand}" CommandParameter="Check" BorderBrush="{StaticResource PosBlueBrush}" Style="{StaticResource PayMethodButtonStyle}" Content="Cheque"/>
 
             <Border Grid.Row="2" Grid.ColumnSpan="3" Margin="4" BorderBrush="#3B3B3B" BorderThickness="0,1,0,1">
                 <Grid>
@@ -269,12 +317,12 @@
             <Button Grid.Row="3" Grid.Column="1" Click="OperationalMenuButton_Click" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="?" FontSize="28" Style="{StaticResource ActionIconTextStyle}"/>
-                    <TextBlock Text="Service type" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Servicio" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
             <Button Grid.Row="3" Grid.Column="2" Click="OpenOrdersButton_Click" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Open" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Abrir" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Abiertas" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
@@ -288,13 +336,13 @@
             </Button>
             <Button Grid.Row="4" Grid.Column="1" Click="CommentButton_Click" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Msg" FontSize="22" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Nota" FontSize="22" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Comentario" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
             <Button Grid.Row="4" Grid.Column="2" Click="CustomerButton_Click" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="User" FontSize="22" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Cliente" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Cliente" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
@@ -307,20 +355,20 @@
             </Button>
             <Button Grid.Row="5" Grid.Column="1" Click="OperationalMenuButton_Click" Style="{StaticResource PosButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Return" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Devol." FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Reembolso" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
-            <Button Grid.Row="5" Grid.RowSpan="2" Grid.Column="2" Click="PaymentButton_Click" Background="{StaticResource PosGreenBrush}" BorderBrush="{StaticResource PosGreenBrush}" Style="{StaticResource PosButtonStyle}">
+            <Button Grid.Row="5" Grid.RowSpan="2" Grid.Column="2" Click="PaymentButton_Click" Style="{StaticResource PayButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock Text="F10" FontSize="32" FontWeight="Bold" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Pago" FontSize="18" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>
 
-            <Button Grid.Row="6" Grid.Column="0" Command="{Binding VoidOrderCommand}" Background="{StaticResource PosRedBrush}" BorderBrush="{StaticResource PosRedBrush}" Style="{StaticResource PosButtonStyle}">
+            <Button Grid.Row="6" Grid.Column="0" Command="{Binding VoidOrderCommand}" Style="{StaticResource VoidButtonStyle}">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Delete" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
+                    <TextBlock Text="Anular" FontSize="20" Style="{StaticResource ActionIconTextStyle}"/>
                     <TextBlock Text="Anular orden" Style="{StaticResource ActionIconTextStyle}"/>
                 </StackPanel>
             </Button>

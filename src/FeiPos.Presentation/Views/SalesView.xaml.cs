@@ -13,20 +13,86 @@ namespace FeiPos.Presentation.Views
         public SalesView()
         {
             InitializeComponent();
+            DataContextChanged += SalesView_DataContextChanged;
+        }
+
+        private void SalesView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue is SalesViewModel oldViewModel)
+            {
+                oldViewModel.SaleCompleted -= OnSaleCompleted;
+                oldViewModel.CheckoutBlocked -= OnCheckoutBlocked;
+            }
+
+            if (e.NewValue is SalesViewModel newViewModel)
+            {
+                newViewModel.SaleCompleted += OnSaleCompleted;
+                newViewModel.CheckoutBlocked += OnCheckoutBlocked;
+            }
+        }
+
+        private async void OnSaleCompleted(string message)
+        {
+            HideSearchSuggestions();
+
+            var dialog = new ContentDialog
+            {
+                Title = "Venta completada",
+                Content = message,
+                PrimaryButtonText = "Aceptar",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            await dialog.ShowAsync();
+            SearchBox.Focus();
+        }
+
+        private async void OnCheckoutBlocked(string message)
+        {
+            HideSearchSuggestions();
+
+            var dialog = new ContentDialog
+            {
+                Title = "No se pudo cobrar",
+                Content = message,
+                PrimaryButtonText = "Aceptar",
+                DefaultButton = ContentDialogButton.Primary
+            };
+
+            await dialog.ShowAsync();
+            SearchBox.Focus();
         }
 
         private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             if (DataContext is SalesViewModel viewModel)
             {
+                if (args.ChosenSuggestion is Product product)
+                {
+                    viewModel.AddToCartCommand.Execute(product);
+                    ResetSearchBox(sender);
+                    return;
+                }
+
                 var query = args.QueryText;
                 if (!string.IsNullOrEmpty(query))
                 {
                     viewModel.SubmitSearchCommand.Execute(query);
-                    sender.Text = string.Empty; // Limpiar para el siguiente escaneo
-                    sender.Focus();
+                    ResetSearchBox(sender);
                 }
             }
+        }
+
+        private void ResetSearchBox(AutoSuggestBox sender)
+        {
+            sender.Text = string.Empty;
+            HideSearchSuggestions();
+            sender.Focus();
+        }
+
+        private void HideSearchSuggestions()
+        {
+            SearchBox.IsSuggestionListOpen = false;
         }
 
         private async void DiscountButton_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -40,7 +106,7 @@ namespace FeiPos.Presentation.Views
             };
 
             var panel = new StackPanel();
-            panel.Children.Add(new TextBlock { Text = $"Total actual: {viewModel.Total:N2}", Margin = new System.Windows.Thickness(0, 0, 0, 8) });
+            panel.Children.Add(new TextBlock { Text = $"Total actual: ₡{viewModel.Total:N2}", Margin = new System.Windows.Thickness(0, 0, 0, 8) });
             panel.Children.Add(amountBox);
 
             var dialog = new ContentDialog
@@ -144,7 +210,13 @@ namespace FeiPos.Presentation.Views
 
             var paymentType = new ComboBox
             {
-                ItemsSource = new[] { "Cash", "Card", "Check" },
+                ItemsSource = new[]
+                {
+                    new PaymentOption("Efectivo", "Cash"),
+                    new PaymentOption("Tarjeta", "Card"),
+                    new PaymentOption("Cheque", "Check"),
+                    new PaymentOption("Credito", "Credit")
+                },
                 SelectedIndex = 0,
                 MinWidth = 220
             };
@@ -153,18 +225,18 @@ namespace FeiPos.Presentation.Views
                 Text = viewModel.Total.ToString("N2"),
                 MinWidth = 220
             };
-            var changeText = new TextBlock { Text = "Cambio: 0.00", FontWeight = System.Windows.FontWeights.SemiBold };
+            var changeText = new TextBlock { Text = "Cambio: ₡0.00", FontWeight = System.Windows.FontWeights.SemiBold };
 
             tenderedBox.TextChanged += (_, _) =>
             {
                 if (decimal.TryParse(tenderedBox.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var tendered))
                 {
-                    changeText.Text = $"Cambio: {Math.Max(0, tendered - viewModel.Total):N2}";
+                    changeText.Text = $"Cambio: ₡{Math.Max(0, tendered - viewModel.Total):N2}";
                 }
             };
 
             var panel = new StackPanel();
-            panel.Children.Add(new TextBlock { Text = $"Total a cobrar: {viewModel.Total:N2}", FontWeight = System.Windows.FontWeights.Bold, Margin = new System.Windows.Thickness(0, 0, 0, 8) });
+            panel.Children.Add(new TextBlock { Text = $"Total a cobrar: ₡{viewModel.Total:N2}", FontWeight = System.Windows.FontWeights.Bold, Margin = new System.Windows.Thickness(0, 0, 0, 8) });
             panel.Children.Add(paymentType);
             panel.Children.Add(new TextBlock { Text = "Recibido", Margin = new System.Windows.Thickness(0, 12, 0, 4) });
             panel.Children.Add(tenderedBox);
@@ -181,7 +253,8 @@ namespace FeiPos.Presentation.Views
 
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
-                viewModel.CheckoutCommand.Execute(paymentType.SelectedItem?.ToString() ?? "Pago avanzado");
+                var selectedPayment = paymentType.SelectedItem as PaymentOption;
+                viewModel.CheckoutCommand.Execute(selectedPayment?.Value ?? "Pago avanzado");
             }
 
             SearchBox.Focus();
@@ -226,12 +299,12 @@ namespace FeiPos.Presentation.Views
 
             var panel = new StackPanel();
             panel.Children.Add(new TextBlock { Text = $"Ventas abiertas: {viewModel.OpenOrders.Count}", Margin = new System.Windows.Thickness(0, 0, 0, 6) });
-            panel.Children.Add(new TextBlock { Text = $"Caja actual: {viewModel.Total:N2}" });
-            panel.Children.Add(new TextBlock { Text = "Historial, cash in/out y cierre de día quedan listos para conectar a reportes persistentes.", TextWrapping = System.Windows.TextWrapping.Wrap, Margin = new System.Windows.Thickness(0, 10, 0, 0) });
+            panel.Children.Add(new TextBlock { Text = $"Caja actual: ₡{viewModel.Total:N2}" });
+            panel.Children.Add(new TextBlock { Text = "Historial, depositos/retiros y cierre de dia quedan listos para conectar a reportes persistentes.", TextWrapping = System.Windows.TextWrapping.Wrap, Margin = new System.Windows.Thickness(0, 10, 0, 0) });
 
             var dialog = new ContentDialog
             {
-                Title = "Menú operacional",
+                Title = "Menu operacional",
                 Content = panel,
                 PrimaryButtonText = "Nueva venta",
                 SecondaryButtonText = "Guardar orden",
@@ -257,6 +330,11 @@ namespace FeiPos.Presentation.Views
             {
                 mainWindow.ShowNavigationPane();
             }
+        }
+
+        private sealed record PaymentOption(string Label, string Value)
+        {
+            public override string ToString() => Label;
         }
     }
 }
