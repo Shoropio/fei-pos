@@ -28,4 +28,4 @@ Fei POS es una aplicación de escritorio robusta y moderna diseñada para el mer
 
 ## 📄 Licencia
 
-Este proyecto es propiedad de Shoropio. Reservados todos los derechos.
+Este proyecto es desarrollado por © 2026 Shoropio Corporation. Reservados todos los derechos.
