@@ -1,46 +1,41 @@
-# Fei POS - Sistema de Punto de Venta Moderno
+# Fei POS - Sistema de Punto de Venta
 
-Fei POS es una aplicación de escritorio robusta y moderna diseñada para el mercado costarricense, ofreciendo integración completa con la Facturación Electrónica de Hacienda (v4.3) y soporte para hardware de punto de venta.
+Fei POS es una aplicación de escritorio orientada al mercado costarricense, con soporte para facturación electrónica (versión 4.3 de Hacienda) y operación en entornos de punto de venta con hardware dedicado.
 
-## 🚀 Inicio Rápido
+## Instalación
 
-¡Empieza a utilizar Fei POS en menos de 1 minuto! No necesitas instalar bases de datos complejas ni servidores.
+No requiere configuración de servidores ni bases de datos externas.
 
-1. **Descargar:** Ve a la pestaña de [Releases](../../releases) en GitHub y descarga la última versión (ej. `FeiPos-v1.1.0-win-x64.zip`).
-2. **Extraer:** Descomprime el archivo ZIP en una carpeta de tu preferencia (ej. `C:\FeiPOS`).
-3. **Ejecutar:** Haz doble clic en el archivo `FeiPos.Presentation.exe`.
-   - *Nota: En el primer arranque, el sistema creará automáticamente la base de datos local y los usuarios por defecto.*
+1. Descarga la última versión desde la sección de releases.
+2. Extrae el archivo en una carpeta local (por ejemplo: `C:\FeiPOS`).
+3. Ejecuta `FeiPos.Presentation.exe`.
 
-### 🔑 Credenciales por Defecto
+En el primer inicio, el sistema crea automáticamente la base de datos local y configura los usuarios iniciales.
 
-Para ingresar por primera vez al sistema, utiliza las siguientes credenciales de Administrador:
+## Acceso inicial
 
-- **Usuario:** `admin`
-- **Contraseña:** `admin123`
+Credenciales por defecto:
 
-*(Te recomendamos cambiar la contraseña o crear un nuevo usuario administrativo desde el menú de Ajustes en cuanto inicies sesión).*
+* Usuario: `admin`
+* Contraseña: `admin123`
 
----
+Se recomienda cambiar estas credenciales después del primer ingreso.
 
-## ✨ Características Principales
+## Funcionalidades
 
-- **Facturación Electrónica CR (v4.3):** Integración nativa con Hacienda.
-- **Gestión de Inventario:** Control de stock, categorías y generación automática de SKU.
-- **Ventas y Facturación:** Múltiples métodos de pago y créditos de clientes.
-- **Hardware POS:** Soporte para impresoras térmicas ESC/POS y gavetas de dinero (Apertura automática).
-- **Cierre de Caja:** Movimientos de entrada/salida y reportes de cierre diario.
-- **Diseño Premium:** Interfaz estandarizada con temática oscura "Zero-Curve".
+* Facturación electrónica compatible con Hacienda (v4.3)
+* Gestión de inventario con control de stock y categorías
+* Registro de ventas con múltiples métodos de pago
+* Integración con impresoras térmicas (ESC/POS)
+* Apertura automática de gaveta de dinero
+* Cierre de caja con control de movimientos diarios
 
----
+## Documentación
 
-## 📖 Documentación Avanzada y Pruebas
+Para configuraciones avanzadas (facturación electrónica, modo sandbox, impresoras o compilación desde código fuente), consulta:
 
-Si deseas configurar la **Facturación Electrónica**, el **Modo Sandbox de Hacienda**, las **Impresoras Térmicas** o eres un desarrollador queriendo compilar desde el código fuente, por favor consulta nuestra documentación extendida:
+`docs.md`
 
-👉 **[Ver Documentación Técnica y Pruebas (docs.md)](./docs.md)**
+## Licencia
 
----
-
-## 📄 Licencia
-
-Este proyecto es desarrollado por © 2026 Shoropio Corporation. Reservados todos los derechos.
+© 2026 Shoropio Corporation. Todos los derechos reservados.
