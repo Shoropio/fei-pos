@@ -92,7 +92,7 @@ namespace FeiPos.Presentation.ViewModels
             _context.DayClosures.Add(closure);
             _context.SaveChanges();
             
-            _printerService.PrintDayClosure(closure);
+            try { _printerService.PrintDayClosure(closure); } catch { }
             
             Notes = string.Empty;
             Refresh();

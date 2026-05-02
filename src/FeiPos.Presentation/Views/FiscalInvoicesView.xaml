@@ -54,6 +54,7 @@
             <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
                 <Button Content="Buscar" Command="{Binding LoadInvoicesCommand}" Margin="0,0,10,0"/>
                 <Button Content="Reimprimir" Command="{Binding ReprintSelectedCommand}" Margin="0,0,10,0"/>
+                <Button Content="Reenviar a Hacienda" Command="{Binding ResendSelectedCommand}" Margin="0,0,10,0" ToolTip="Re-encolar para envío si falló"/>
                 <Button Content="Anular / NC" Command="{Binding CancelSelectedCommand}"/>
             </StackPanel>
         </Grid>

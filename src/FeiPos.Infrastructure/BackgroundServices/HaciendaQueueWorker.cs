@@ -58,7 +58,7 @@ namespace FeiPos.Infrastructure.BackgroundServices
 
             if (pendingSales.Any())
             {
-                var token = await identityService.GetAccessTokenAsync(config.HaciendaUser, "password_placeholder"); // Necesita password real
+                var token = await identityService.GetAccessTokenAsync(); // Lee credenciales desde configuración
                 if (token != null)
                 {
                     foreach (var sale in pendingSales)

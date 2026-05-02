@@ -39,14 +39,21 @@ namespace FeiPos.Infrastructure.Services
     {
         public string CompanyName { get; set; } = "Mi Comercio S.A.";
         public string TaxId { get; set; } = "3-101-123456";
+
+        // Hacienda ATV
         public string HaciendaApiUrl { get; set; } = "https://api.comprobanteselectronicos.go.cr/recepcion/v1/";
-        public string HaciendaUser { get; set; } = "";
-        public string CertificatePath { get; set; } = "C:\\Certs\\firma.p12";
-        public string CertificatePin { get; set; } = "1234";
+        public string HaciendaIdpUrl { get; set; } = "https://idp.comprobanteselectronicos.go.cr/auth/realms/rut/protocol/openid-connect/token";
+        public bool UseSandbox { get; set; } = false;
+        public string ApiUsername { get; set; } = "";
+        public string ApiPassword { get; set; } = "";
+
+        // Firma Digital
+        public string CertificatePath { get; set; } = "";
+        public string CertificatePin { get; set; } = "";
+
+        // Local del negocio
         public string TerminalId { get; set; } = "00001";
         public string OfficeId { get; set; } = "001";
-        public string PrinterName { get; set; } = "POS-80";
-        public bool AutoPrintReceipt { get; set; } = true;
         public string EconomicActivity { get; set; } = "000000";
         public string Province { get; set; } = "1";
         public string Canton { get; set; } = "01";
@@ -55,5 +62,10 @@ namespace FeiPos.Infrastructure.Services
         public string Address { get; set; } = "Otras señas";
         public string Phone { get; set; } = "2222-3333";
         public string Email { get; set; } = "ventas@comercio.com";
+
+        // Impresora
+        public string PrinterName { get; set; } = "";
+        public bool AutoPrintReceipt { get; set; } = true;
+        public bool OpenDrawerOnSale { get; set; } = false;
     }
 }

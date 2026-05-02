@@ -258,9 +258,7 @@ namespace FeiPos.Presentation.ViewModels
                 if (Cart.Count == 1)
                 {
                     SelectedCartItem = Cart.First();
-                }
-                else
-                {
+                } else {
                     StatusMessage = "Seleccione una linea para eliminar";
                     CheckoutBlocked?.Invoke(StatusMessage);
                     return;
@@ -382,9 +380,7 @@ namespace FeiPos.Presentation.ViewModels
             if (existing != null)
             {
                 existing.Quantity += product.DefaultQuantity <= 0 ? 1 : product.DefaultQuantity;
-            }
-            else
-            {
+            } else {
                 Cart.Add(new SaleItem
                 {
                     ProductId = product.Id,
@@ -437,7 +433,15 @@ namespace FeiPos.Presentation.ViewModels
             PersistFinalSale(sale);
             await _context.SaveChangesAsync();
 
-            _printerService.PrintReceipt(sale);
+            if (_configService.Config.OpenDrawerOnSale)
+            {
+                try { _printerService.OpenDrawer(); } catch { }
+            }
+
+            if (_configService.Config.AutoPrintReceipt)
+            {
+                try { _printerService.PrintReceipt(sale); } catch { }
+            }
             _ = SendFiscalDocumentAsync(sale);
 
             StartBlankOrder();

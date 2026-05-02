@@ -64,10 +64,10 @@ namespace FeiPos.Presentation.ViewModels
             _context.CashDrawerEntries.Add(entry);
             _context.SaveChanges();
 
-            _printerService.PrintCashEntry(entry);
+            try { _printerService.PrintCashEntry(entry); } catch { }
             if (entry.Type == CashDrawerEntryType.Withdrawal)
             {
-                _printerService.OpenDrawer();
+                try { _printerService.OpenDrawer(); } catch { }
             }
 
             Amount = 0;

@@ -11,6 +11,10 @@ namespace FeiPos.Infrastructure.Services
         private readonly HttpClient _httpClient;
         private readonly ConfigurationService _configService;
 
+        private string ApiUrl => _configService.Config.UseSandbox
+            ? "https://api.comprobanteselectronicos.go.cr/recepcion-sandbox/v1/"
+            : "https://api.comprobanteselectronicos.go.cr/recepcion/v1/";
+
         public HaciendaService(HttpClient httpClient, ConfigurationService configService)
         {
             _httpClient = httpClient;
@@ -41,7 +45,7 @@ namespace FeiPos.Infrastructure.Services
                 comprobanteXml = Convert.ToBase64String(Encoding.UTF8.GetBytes(signedXml))
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, _configService.Config.HaciendaApiUrl + "recepcion")
+            var request = new HttpRequestMessage(HttpMethod.Post, ApiUrl + "recepcion")
             {
                 Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
             };
@@ -57,7 +61,7 @@ namespace FeiPos.Infrastructure.Services
             // En una implementación real, se debe obtener un token antes de llamar a este método
             // o pasarlo como parámetro.
             
-            var request = new HttpRequestMessage(HttpMethod.Get, _configService.Config.HaciendaApiUrl + "recepcion/" + key);
+            var request = new HttpRequestMessage(HttpMethod.Get, ApiUrl + "recepcion/" + key);
             // request.Headers.Authorization = ...
 
             var response = await _httpClient.SendAsync(request);
