@@ -80,7 +80,7 @@
                            HorizontalAlignment="Center"
                            Margin="0,20,0,0"/>
                 <TextBlock Text="{Binding StatusMessage}"
-                           Foreground="{StaticResource AppMutedTextBrush}"
+                           Foreground="#FFA07A" FontWeight="SemiBold"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Center"
                            TextAlignment="Center"

@@ -2,7 +2,7 @@
 
 Fei POS es una aplicación de escritorio robusta y moderna diseñada para el mercado costarricense, ofreciendo integración completa con la Facturación Electrónica de Hacienda (v4.3) y soporte para hardware de punto de venta.
 
-## 🚀 Inicio Rápido (Cero Dolores de Cabeza)
+## 🚀 Inicio Rápido
 
 ¡Empieza a utilizar Fei POS en menos de 1 minuto! No necesitas instalar bases de datos complejas ni servidores.
 

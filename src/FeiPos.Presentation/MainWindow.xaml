@@ -93,6 +93,9 @@
                 <ui:NavigationViewItem Icon="Setting" Tag="Settings">
                     <TextBlock Text="Configuración" Margin="20,0,0,0"/>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem Icon="SaveLocal" Tag="Backups">
+                    <TextBlock Text="Copias de Seguridad" Margin="20,0,0,0"/>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Icon="LeaveChat" Tag="Logout">
                     <TextBlock Text="Cerrar sesion" Margin="20,0,0,0"/>
                 </ui:NavigationViewItem>

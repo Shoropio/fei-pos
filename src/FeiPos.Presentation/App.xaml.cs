@@ -58,6 +58,7 @@ namespace FeiPos.Presentation
             services.AddTransient<UsersViewModel>();
             services.AddTransient<CreditAccountsViewModel>();
             services.AddTransient<FiscalInvoicesViewModel>();
+            services.AddTransient<BackupsViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<Views.LoginWindow>();
             services.AddSingleton<MainWindow>();

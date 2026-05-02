@@ -167,6 +167,7 @@ namespace FeiPos.Presentation
                 "Users" => new UsersView { DataContext = _serviceProvider.GetRequiredService<UsersViewModel>() },
                 "CreditAccounts" => new CreditAccountsView { DataContext = _serviceProvider.GetRequiredService<CreditAccountsViewModel>() },
                 "Settings" => new SettingsView { DataContext = _serviceProvider.GetRequiredService<SettingsViewModel>() },
+                "Backups" => new BackupsView { DataContext = _serviceProvider.GetRequiredService<BackupsViewModel>() },
                 "Reports" => new QueueView { DataContext = _serviceProvider.GetRequiredService<QueueViewModel>() },
                 "Inventory" => new InventoryView { DataContext = _serviceProvider.GetRequiredService<InventoryViewModel>() },
                 "Customers" => new CustomerView { DataContext = _serviceProvider.GetRequiredService<CustomerViewModel>() },
