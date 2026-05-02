@@ -55,21 +55,18 @@ namespace FeiPos.Presentation.ViewModels
                 {
                     using var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
                     
-                    var dbPath = "feipos.db";
-                    if (File.Exists(dbPath))
+                    void AddFile(string path)
                     {
-                        archive.CreateEntryFromFile(dbPath, Path.GetFileName(dbPath));
-                    }
-                    
-                    if (File.Exists(dbPath + "-wal"))
-                    {
-                        archive.CreateEntryFromFile(dbPath + "-wal", Path.GetFileName(dbPath + "-wal"));
+                        if (!File.Exists(path)) return;
+                        var entry = archive.CreateEntry(Path.GetFileName(path));
+                        using var entryStream = entry.Open();
+                        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                        fs.CopyTo(entryStream);
                     }
 
-                    if (File.Exists(dbPath + "-shm"))
-                    {
-                        archive.CreateEntryFromFile(dbPath + "-shm", Path.GetFileName(dbPath + "-shm"));
-                    }
+                    AddFile("feipos.db");
+                    AddFile("feipos.db-wal");
+                    AddFile("feipos.db-shm");
                 });
 
                 StatusMessage = $"Copia de seguridad guardada exitosamente en:\n{zipPath}";
