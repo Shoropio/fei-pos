@@ -1,16 +1,32 @@
-# Fei POS - Sistema de Punto de Venta
+# Fei POS
 
-Fei POS es una aplicación de escritorio orientada al mercado costarricense, con soporte para facturación electrónica (versión 4.3 de Hacienda) y operación en entornos de punto de venta con hardware dedicado.
+Sistema de punto de venta para comercios en Costa Rica, con facturación electrónica integrada (versión 4.3 de Hacienda) y compatibilidad con hardware de caja.
+
+Fei POS está diseñado para operar sin configuraciones complejas, permitiendo iniciar ventas en pocos minutos desde una instalación local.
+
+---
+
+## Qué resuelve
+
+Fei POS cubre las operaciones básicas de un punto de venta:
+
+* Facturación electrónica conforme a normativa vigente
+* Control de inventario en tiempo real
+* Registro de ventas y métodos de pago
+* Gestión de caja (aperturas, movimientos y cierres)
+* Integración con impresoras térmicas y gavetas de dinero
+
+---
 
 ## Instalación
 
-No requiere configuración de servidores ni bases de datos externas.
+1. Descarga la última versión desde la sección de releases
+2. Extrae el archivo en una carpeta local (ej. `C:\FeiPOS`)
+3. Ejecuta `FeiPos.Presentation.exe`
 
-1. Descarga la última versión desde la sección de releases.
-2. Extrae el archivo en una carpeta local (por ejemplo: `C:\FeiPOS`).
-3. Ejecuta `FeiPos.Presentation.exe`.
+El sistema crea automáticamente la base de datos en el primer inicio.
 
-En el primer inicio, el sistema crea automáticamente la base de datos local y configura los usuarios iniciales.
+---
 
 ## Acceso inicial
 
@@ -21,20 +37,36 @@ Credenciales por defecto:
 
 Se recomienda cambiar estas credenciales después del primer ingreso.
 
-## Funcionalidades
+---
 
-* Facturación electrónica compatible con Hacienda (v4.3)
-* Gestión de inventario con control de stock y categorías
-* Registro de ventas con múltiples métodos de pago
-* Integración con impresoras térmicas (ESC/POS)
-* Apertura automática de gaveta de dinero
-* Cierre de caja con control de movimientos diarios
+## Entorno de operación
 
-## Documentación
+* Aplicación de escritorio (Windows 64 bits)
+* Base de datos local (sin servidor requerido)
+* Operación offline con sincronización según configuración fiscal
 
-Para configuraciones avanzadas (facturación electrónica, modo sandbox, impresoras o compilación desde código fuente), consulta:
+---
+
+## Hardware soportado
+
+* Impresoras térmicas compatibles con ESC/POS
+* Gavetas de dinero con apertura automática
+
+---
+
+## Configuración avanzada
+
+La configuración de facturación electrónica, entorno sandbox de Hacienda y dispositivos se documenta en:
 
 `docs.md`
+
+---
+
+## Estado del proyecto
+
+Fei POS se encuentra en desarrollo activo. Las funcionalidades pueden ampliarse o ajustarse según requerimientos del mercado y cambios en la normativa fiscal.
+
+---
 
 ## Licencia
 
