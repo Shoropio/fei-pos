@@ -25,7 +25,7 @@
                         Command="{Binding CreateBackupCommand}" 
                         Style="{StaticResource AccentButtonStyle}"
                         Width="200" Height="45" HorizontalAlignment="Left"
-                        IsEnabled="{Binding IsWorking, Converter={StaticResource InverseBooleanConverter}, FallbackValue=True}"/>
+                        IsEnabled="{Binding IsNotWorking}"/>
 
                 <TextBlock Text="{Binding StatusMessage}" 
                            Foreground="#FFA07A" FontWeight="SemiBold" TextWrapping="Wrap"

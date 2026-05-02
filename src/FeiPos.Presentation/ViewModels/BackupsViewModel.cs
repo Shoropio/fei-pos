@@ -14,8 +14,14 @@ namespace FeiPos.Presentation.ViewModels
         private readonly AppDbContext _context;
 
         [ObservableProperty] private string _statusMessage = "Listo para crear copia de seguridad.";
-        [ObservableProperty] private bool _isWorking;
+        
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNotWorking))]
+        private bool _isWorking;
+        
         [ObservableProperty] private string _lastBackupDate = "Nunca";
+
+        public bool IsNotWorking => !IsWorking;
 
         public BackupsViewModel(AppDbContext context)
         {
