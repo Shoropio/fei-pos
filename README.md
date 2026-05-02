@@ -68,6 +68,16 @@ Fei POS se encuentra en desarrollo activo. Las funcionalidades pueden ampliarse 
 
 ---
 
+## Contribuciones
+
+Las contribuciones son bienvenidas.
+
+Si deseas proponer mejoras, correcciones o nuevas funcionalidades, puedes hacerlo mediante un *pull request*. Para cambios importantes, se recomienda abrir primero un *issue* para discutir la propuesta.
+
+Antes de contribuir, revisa la documentación y asegúrate de que tu cambio esté alineado con la arquitectura del proyecto.
+
+---
+
 ## Licencia
 
 © 2026 Shoropio Corporation. Todos los derechos reservados.
