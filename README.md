@@ -82,7 +82,7 @@ Antes de contribuir, revisa la documentación y asegúrate de que tu cambio est�
 
 La configuración avanzada, facturación electrónica, hardware y guía de desarrollo están disponibles en:
 
-👉 [Documentación técnica](./docs.md)
+[Documentación técnica](./docs.md)
 
 ---
 
