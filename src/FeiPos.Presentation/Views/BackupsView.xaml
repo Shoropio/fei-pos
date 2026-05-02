@@ -36,7 +36,7 @@
         <Border Grid.Row="2" Background="{StaticResource AppPanelBrush}" BorderBrush="{StaticResource AppBorderBrush}" 
                 BorderThickness="1" CornerRadius="0" Padding="30" MaxWidth="600" HorizontalAlignment="Left" Margin="0,20,0,0">
             <StackPanel>
-                <TextBlock Text="Restaurar Respaldo" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <TextBlock Text="Restaurar respaldo" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
                 <TextBlock Text="Carga un archivo ZIP previo para recuperar toda la información. ATENCIÓN: Esto reemplazará los datos actuales y la aplicación se cerrará." 
                            TextWrapping="Wrap" Foreground="#FFA07A" Margin="0,0,0,20"/>
                 
