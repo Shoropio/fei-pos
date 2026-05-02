@@ -2,29 +2,44 @@
 
 Fei POS es una aplicación de escritorio robusta y moderna diseñada para el mercado costarricense, ofreciendo integración completa con la Facturación Electrónica de Hacienda (v4.3) y soporte para hardware de punto de venta.
 
-## 🚀 Características Principales
+## 🚀 Inicio Rápido (Cero Dolores de Cabeza)
 
-- **Facturación Electrónica CR (v4.3):** Integración nativa con Hacienda, manejo automático de colas de envío, reintentos y almacenamiento de XML (Generado, Firmado, Respuesta).
-- **Gestión de Inventario:** Control de stock, categorías, generación automática de SKU y selector visual de productos.
-- **Ventas y Facturación:** Interfaz optimizada para POS, manejo de múltiples métodos de pago (Efectivo, Tarjeta, Cheque, Crédito, SINPE).
-- **Seguridad:** Sistema de usuarios con roles, contraseñas seguras (Hashing) y ventana de inicio de sesión profesional.
-- **Hardware POS:** Soporte para impresoras térmicas ESC/POS y apertura automática de gaveta de dinero.
-- **Cierre de Caja:** Movimientos de entrada/salida (chica) y reportes de cierre diario con cuadre de efectivo.
-- **Diseño Premium:** Interfaz oscura (Dark Mode) con estética industrial, bordes cuadrados y alineación precisa.
+¡Empieza a utilizar Fei POS en menos de 1 minuto! No necesitas instalar bases de datos complejas ni servidores.
 
-## 🛠️ Tecnologías
+1. **Descargar:** Ve a la pestaña de [Releases](../../releases) en GitHub y descarga la última versión (ej. `FeiPos-v1.1.0-win-x64.zip`).
+2. **Extraer:** Descomprime el archivo ZIP en una carpeta de tu preferencia (ej. `C:\FeiPOS`).
+3. **Ejecutar:** Haz doble clic en el archivo `FeiPos.Presentation.exe`.
+   - *Nota: En el primer arranque, el sistema creará automáticamente la base de datos local y los usuarios por defecto.*
 
-- **Framework:** .NET Core (WPF)
-- **Base de Datos:** SQLite con Entity Framework Core
-- **UI:** ModernWPF (Windows UI styles)
-- **Facturación:** Hacienda CR v4.3 (Integration Services)
-- **Impresión:** ESC/POS nativo
+### 🔑 Credenciales por Defecto
 
-## 📋 Requisitos
+Para ingresar por primera vez al sistema, utiliza las siguientes credenciales de Administrador:
 
-- Windows 10/11
-- .NET Desktop Runtime
-- Certificado de Firma Digital (.p12) y credenciales de ATV (para facturación real).
+- **Usuario:** `admin`
+- **Contraseña:** `admin123`
+
+*(Te recomendamos cambiar la contraseña o crear un nuevo usuario administrativo desde el menú de Ajustes en cuanto inicies sesión).*
+
+---
+
+## ✨ Características Principales
+
+- **Facturación Electrónica CR (v4.3):** Integración nativa con Hacienda.
+- **Gestión de Inventario:** Control de stock, categorías y generación automática de SKU.
+- **Ventas y Facturación:** Múltiples métodos de pago y créditos de clientes.
+- **Hardware POS:** Soporte para impresoras térmicas ESC/POS y gavetas de dinero (Apertura automática).
+- **Cierre de Caja:** Movimientos de entrada/salida y reportes de cierre diario.
+- **Diseño Premium:** Interfaz estandarizada con temática oscura "Zero-Curve".
+
+---
+
+## 📖 Documentación Avanzada y Pruebas
+
+Si deseas configurar la **Facturación Electrónica**, el **Modo Sandbox de Hacienda**, las **Impresoras Térmicas** o eres un desarrollador queriendo compilar desde el código fuente, por favor consulta nuestra documentación extendida:
+
+👉 **[Ver Documentación Técnica y Pruebas (docs.md)](./docs.md)**
+
+---
 
 ## 📄 Licencia
 
