@@ -81,5 +81,50 @@ namespace FeiPos.Presentation.ViewModels
                 IsWorking = false;
             }
         }
+
+        [RelayCommand]
+        private async Task RestoreBackup()
+        {
+            if (IsWorking) return;
+
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Archivos ZIP (*.zip)|*.zip",
+                Title = "Seleccione el archivo de respaldo a restaurar"
+            };
+
+            if (dialog.ShowDialog() != true) return;
+
+            var zipPath = dialog.FileName;
+            IsWorking = true;
+            StatusMessage = "Restaurando base de datos...";
+
+            try
+            {
+                await _context.Database.CloseConnectionAsync();
+                Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+
+                await Task.Run(() =>
+                {
+                    if (File.Exists("feipos.db")) File.Delete("feipos.db");
+                    if (File.Exists("feipos.db-wal")) File.Delete("feipos.db-wal");
+                    if (File.Exists("feipos.db-shm")) File.Delete("feipos.db-shm");
+
+                    using var archive = ZipFile.OpenRead(zipPath);
+                    foreach (var entry in archive.Entries)
+                    {
+                        entry.ExtractToFile(entry.Name, overwrite: true);
+                    }
+                });
+
+                System.Windows.MessageBox.Show("Restauración completada con éxito. La aplicación se cerrará ahora para aplicar los cambios. Por favor, vuelva a abrir Fei POS.", "Restauración exitosa", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                System.Windows.Application.Current.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error al restaurar: {ex.Message}";
+                IsWorking = false;
+            }
+        }
     }
 }

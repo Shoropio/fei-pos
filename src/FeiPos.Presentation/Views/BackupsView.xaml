@@ -21,15 +21,30 @@
                 <TextBlock Text="Genera un archivo ZIP con la base de datos completa. Este archivo lo puedes guardar en una llave USB o en la nube (Google Drive, OneDrive)." 
                            TextWrapping="Wrap" Foreground="{StaticResource AppMutedTextBrush}" Margin="0,0,0,20"/>
                 
-                <Button Content="Crear Respaldo Ahora" 
+                <Button Content="Crear respaldo" 
                         Command="{Binding CreateBackupCommand}" 
                         Style="{StaticResource AccentButtonStyle}"
                         Width="200" Height="45" HorizontalAlignment="Left"
                         IsEnabled="{Binding IsNotWorking}"/>
 
                 <TextBlock Text="{Binding StatusMessage}" 
-                           Foreground="#FFA07A" FontWeight="SemiBold" TextWrapping="Wrap"
+                           Foreground="#4CAF50" FontWeight="SemiBold" TextWrapping="Wrap"
                            Margin="0,20,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Background="{StaticResource AppPanelBrush}" BorderBrush="{StaticResource AppBorderBrush}" 
+                BorderThickness="1" CornerRadius="0" Padding="30" MaxWidth="600" HorizontalAlignment="Left" Margin="0,20,0,0">
+            <StackPanel>
+                <TextBlock Text="Restaurar Respaldo" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <TextBlock Text="Carga un archivo ZIP previo para recuperar toda la información. ATENCIÓN: Esto reemplazará los datos actuales y la aplicación se cerrará." 
+                           TextWrapping="Wrap" Foreground="#FFA07A" Margin="0,0,0,20"/>
+                
+                <Button Content="Restaurar datos" 
+                        Command="{Binding RestoreBackupCommand}" 
+                        Style="{StaticResource AccentButtonStyle}" Background="#C62828"
+                        Width="200" Height="45" HorizontalAlignment="Left"
+                        IsEnabled="{Binding IsNotWorking}"/>
             </StackPanel>
         </Border>
     </Grid>
