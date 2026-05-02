@@ -78,6 +78,14 @@ Antes de contribuir, revisa la documentación y asegúrate de que tu cambio est�
 
 ---
 
+## Documentación
+
+La configuración avanzada, facturación electrónica, hardware y guía de desarrollo están disponibles en:
+
+👉 [Documentación técnica](./docs.md)
+
+---
+
 ## Licencia
 
 © 2026 Shoropio Corporation. Todos los derechos reservados.
